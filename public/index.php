@@ -6,10 +6,13 @@ use Klein\Klein;
 use app\NL\Models\Employee\Employee;
 use app\NL\Models\Company\Company;
 use app\NL\Models\Project\Project;
+use app\NL\database\Database;
 
 $klein = new Klein();
 
 $smarty = new Smarty();
+
+$database = new Database();
 
 $klein->respond('GET', '/', function () use ($smarty) {
     $user = new Employee('Nebojsa', 'Lalic', 'nebojsa.lalic@devtechgroup.com', 'Software developer');
@@ -47,6 +50,11 @@ $klein->onHttpError(function () use ($smarty) {
     $smarty->assign('errorMessage', $errorMessage);
 
     return $smarty->display('templates/404.tpl');
+});
+
+$klein->respond('POST', '/', function () use ($database) {
+    $sql = "INSERT INTO user (first_name, last_name, age, is_active) VALUES (\"Test Name\", \"Test Last Name\", \"29\", 1)";
+    $database->setQuery($sql);
 });
 
 $klein->dispatch();
