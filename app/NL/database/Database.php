@@ -2,25 +2,32 @@
 
 namespace app\NL\database;
 
+use MongoDB\Driver\Exception\ConnectionException;
+use MongoDB\Driver\Manager;
 use PDO;
 use PDOException;
 
 class Database
 {
-    private $host = Config::DB_HOST;
-    private $dbname = Config::DB_NAME;
-    private $user = Config::DB_USER;
-    private $pass = Config::DB_PASS;
+    private $dbHost;
+    private $dbName;
+    private $user;
+    private $pass;
+    private $currentDb = Config::CURRENT_DB;
     private $connection;
 
     /**
      * @return PDO
      */
-    public function getConnectionToDatabase()
+    public function connectToMySQLDatabase()
     {
+        $this->dbHost = Config::DB_HOST_MYSQL;
+        $this->dbName = Config::DB_NAME_MYSQL;
+        $this->user = Config::DB_USER_MYSQL;
+        $this->pass = Config::DB_PASS_MYSQL;
         $connection = $this->connection;
         try {
-            $dataSourceName = 'mysql:host=' . $this->host . ';dbname=' . $this->dbname;
+            $dataSourceName = 'mysql:host=' . $this->dbHost . ';dbname=' . $this->dbName;
             $connection = new \PDO($dataSourceName, $this->user, $this->pass);
             $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $ex) {
@@ -30,13 +37,27 @@ class Database
     }
 
     /**
-     * @param $sql
-     * @return \PDOStatement
+     * @return Manager
      */
-    public function setQuery ($sql) {
-        $connection = $this->getConnectionToDatabase();
-        $query = $connection->query($sql);
+    public function connectToMongoDatabase()
+    {
+//        $this->dbHost = Config::DB_HOST_MONGO;
+//        $this->dbName = Config::DB_NAME_MONGO;
+//        $this->user = Config::DB_USER_MONGO;
+//        $this->pass = Config::DB_PASS_MONGO;
 
-        return $query;
+        return $this->connection = new Manager('mongodb://localhost:27017');
+    }
+    
+    public function getDatabaseConnection () {
+        if ($this->currentDb == 'mysql') {
+            $this->connection = $this->connectToMySQLDatabase();
+            return $this->connection;
+        } else if ($this->currentDb == 'mongodb') {
+            $this->connection = $this->connectToMongoDatabase();
+            return $this->connection;
+        } else {
+            throw new ConnectionException('***** BASE YOU SPECIFY DO NOT EXCIST *****');
+        }
     }
 }

@@ -52,9 +52,21 @@ $klein->onHttpError(function () use ($smarty) {
     return $smarty->display('templates/404.tpl');
 });
 
-$klein->respond('POST', '/', function () use ($database) {
-    $sql = "INSERT INTO user (first_name, last_name, age, is_active) VALUES (\"Test Name\", \"Test Last Name\", \"29\", 1)";
-    $database->setQuery($sql);
+//TEMPORARY TEST MySQL Connection
+$klein->respond('POST', '/mysql', function () use ($database) {
+    $queryString = "INSERT INTO user (first_name, last_name, age, is_active) VALUES (\"Test First Name\", \"Test Last Name\", 29, 1)";
+    $database->getDatabaseConnection()->query($queryString);
+});
+
+//TEMPORARY TEST Mongo Connection
+$klein->respond('POST', '/mongodb', function () use ($database){
+    $bulk = new \MongoDB\Driver\BulkWrite();
+    $document1 = ['first_name' => 'Nebojsa', 'last_name'=>'Lalic', 'job'=>'developer'];
+    $bulk->insert($document1);
+    $writeConcern = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 1000);
+    $database->getDatabaseConnection()->executeBulkWrite('test.guest', $bulk, $writeConcern);
+
+    var_dump($document1);
 });
 
 $klein->dispatch();
