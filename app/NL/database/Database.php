@@ -13,51 +13,80 @@ class Database
     private $dbName;
     private $user;
     private $pass;
-    private $currentDb = Config::CURRENT_DB;
-    private $connection;
+    private $currentDb;
+
+    private static $connection = null;
 
     /**
-     * @return PDO
+     * Database constructor.
      */
-    public function connectToMySQLDatabase()
+    public function __construct()
     {
-        $this->dbHost = Config::DB_HOST_MYSQL;
-        $this->dbName = Config::DB_NAME_MYSQL;
-        $this->user = Config::DB_USER_MYSQL;
-        $this->pass = Config::DB_PASS_MYSQL;
-        $connection = $this->connection;
-        try {
-            $dataSourceName = 'mysql:host=' . $this->dbHost . ';dbname=' . $this->dbName;
-            $connection = new \PDO($dataSourceName, $this->user, $this->pass);
-            $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $ex) {
-            echo 'Connection failed: ' . $ex->getMessage();
+        $config = new Config();
+        $this->currentDb = $config->currentDbName;
+        switch ($this->currentDb) {
+            case 'mysql':
+                $this->dbHost = $config->dbHostMySql;
+                $this->dbName = $config->dbNameMySql;
+                $this->user = $config->dbUserMySql;
+                $this->pass = $config->dbPassMySql;
+                self::$connection = $this->connectToMySQLDatabase();
+                break;
+            case 'mongodb':
+                $this->dbHost = $config->dbHostMongoDb;
+                $this->dbName = $config->dbNameMongoDb;
+                $this->user = $config->dbUserMongoDb;
+                $this->pass = $config->dbPassMondoDb;
+                self::$connection = $this->connectToMongoDatabase();
+                break;
+            default:
+                throw new ConnectionException('***** BASE YOU SPECIFY DO NOT EXCIST *****');
+                break;
         }
-        return $connection;
     }
 
     /**
-     * @return Manager
+     * @return null|PDO
      */
-    public function connectToMongoDatabase()
+    private function connectToMySQLDatabase()
     {
-//        $this->dbHost = Config::DB_HOST_MONGO;
-//        $this->dbName = Config::DB_NAME_MONGO;
-//        $this->user = Config::DB_USER_MONGO;
-//        $this->pass = Config::DB_PASS_MONGO;
-
-        return $this->connection = new Manager('mongodb://localhost:27017');
-    }
-    
-    public function getDatabaseConnection () {
-        if ($this->currentDb == 'mysql') {
-            $this->connection = $this->connectToMySQLDatabase();
-            return $this->connection;
-        } else if ($this->currentDb == 'mongodb') {
-            $this->connection = $this->connectToMongoDatabase();
-            return $this->connection;
-        } else {
-            throw new ConnectionException('***** BASE YOU SPECIFY DO NOT EXCIST *****');
+        if (self::$connection == null) {
+            try {
+                $dataSourceName = 'mysql:host=' . $this->dbHost . ';dbname=' . $this->dbName;
+                self::$connection = new \PDO($dataSourceName, $this->user, $this->pass);
+                self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (PDOException $ex) {
+                echo 'Connection to MySQL base failed: ' . $ex->getMessage();
+            }
         }
+        return self::$connection;
+    }
+
+    /**
+     * @return Manager|null
+     */
+    private function connectToMongoDatabase()
+    {
+        if (self::$connection == null) {
+            try {
+                self::$connection = new Manager('mongodb://' . $this->dbHost . ':27017');
+            } catch (ConnectionException $ex) {
+                echo 'Connection to MongoDB base failed: ' . $ex->getMessage();
+            }
+        }
+        return self::$connection;
+    }
+
+    /**
+     * @return Manager|null|PDO
+     */
+    public function getDatabaseConnection()
+    {
+        return self::$connection;
+    }
+
+    public static function disconnect()
+    {
+        self::$connection = null;
     }
 }
