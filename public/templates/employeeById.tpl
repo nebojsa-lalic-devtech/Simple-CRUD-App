@@ -8,9 +8,11 @@
 <p>------------------------------------------------------------</p>
 <div>
     <ul>
-            <li><p><b>Name: </b>{$employeeFirstName} {$employeeLastName}</p></li>
-            <li><p><b>Email: </b>{$employeeEmail}</p></li>
-            <li><p><b>Job: </b>{$employeeJob}</p></li><br>
+        <li><p><b>Id: </b>{$employeeId}</p></li>
+        <li><p><b>Name: </b>{$employee.first_name} {$employee.last_name}</p></li>
+        <li><p><b>Email: </b>{$employee.email}</p></li>
+        <li><p><b>Job: </b>{$employee.job}</p></li>
+        <br>
     </ul>
 </div>
 <p>------------------------------------------------------------</p>

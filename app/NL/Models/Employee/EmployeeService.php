@@ -51,13 +51,7 @@ class EmployeeService extends Database implements IEmployeeService
         $query = "SELECT * FROM employee WHERE id=$id LIMIT 1";
         $result = $this->getDatabaseConnection()->query($query);
         $oneEmployee = $result->fetch(\PDO::FETCH_ASSOC);
-        $dtoEmployee = new Employee($oneEmployee['first_name'], $oneEmployee['last_name'],$oneEmployee['email'],$oneEmployee['job']);
-//        $dtoEmployee->setFirstName($oneEmployee['first_name']);
-//        $dtoEmployee->setLastName($oneEmployee['last_name']);
-//        $dtoEmployee->setEmail($oneEmployee['email']);
-//        $dtoEmployee->setJob($oneEmployee['job']);
-        var_dump($oneEmployee);
-        return $dtoEmployee;
-    }
 
+        return $oneEmployee;
+    }
 }

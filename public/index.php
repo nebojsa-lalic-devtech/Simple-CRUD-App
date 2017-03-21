@@ -82,11 +82,9 @@ $klein->respond('DELETE', '/[:id]', function ($request) use ($employeeService, $
 
 //GET ONE Employee
 $klein->respond('GET', '/[:id]', function ($request) use ($employeeService, $smarty) {
-    $object = $employeeService->getOneEmployee($request->id);
-    $smarty->assign('employeeFirstName', $object->getFirstName());
-    $smarty->assign('employeeLastName', $object->getLastName());
-    $smarty->assign('employeeEmail', $object->getEmail());
-    $smarty->assign('employeeJob', $object->getJob());
+    $employee = $employeeService->getOneEmployee($request->id);
+    $smarty->assign('employeeId', $request->id);
+    $smarty->assign('employee', $employee);
     return $smarty->display('templates/employeeById.tpl');
 });
 
