@@ -69,10 +69,15 @@ $klein->respond('POST', '/mongodb', function () use ($database) {
 
     var_dump($document1);
 });
-
+//GET ALL Employees
 $klein->respond('GET', '/', function () use ($employeeService, $smarty) {
     $smarty->assign('employeeArray', $employeeService->getAllEmployees());
     return $smarty->display('templates/index.tpl');
+});
+
+//DELETE item from Employee table
+$klein->respond('DELETE', '/[:id]', function ($request) use ($employeeService, $smarty) {
+    $employeeService->deleteEmployee($request->id, 'employee');
 });
 
 $klein->dispatch();

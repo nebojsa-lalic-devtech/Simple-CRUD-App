@@ -89,4 +89,12 @@ class Database
     {
         self::$connection = null;
     }
+
+    /**
+     * @return string
+     */
+    public function getCurrentDb()
+    {
+        return $this->currentDb;
+    }
 }
