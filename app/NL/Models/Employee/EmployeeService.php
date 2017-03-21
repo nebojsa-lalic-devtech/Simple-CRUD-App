@@ -32,9 +32,9 @@ class EmployeeService extends Database implements IEmployeeService
         return $rows;
     }
 
-    public function deleteEmployee($id, $table)
+    public function deleteEmployee($id)
     {
-        $query = "DELETE FROM $table WHERE id = $id";
+        $query = "DELETE FROM employee WHERE id = $id";
         $result = $this->getDatabaseConnection()->query($query);
 
         if ($result == false) {
@@ -46,5 +46,18 @@ class EmployeeService extends Database implements IEmployeeService
         }
     }
 
+    public function getOneEmployee($id)
+    {
+        $query = "SELECT * FROM employee WHERE id=$id LIMIT 1";
+        $result = $this->getDatabaseConnection()->query($query);
+        $oneEmployee = $result->fetch(\PDO::FETCH_ASSOC);
+        $dtoEmployee = new Employee($oneEmployee['first_name'], $oneEmployee['last_name'],$oneEmployee['email'],$oneEmployee['job']);
+//        $dtoEmployee->setFirstName($oneEmployee['first_name']);
+//        $dtoEmployee->setLastName($oneEmployee['last_name']);
+//        $dtoEmployee->setEmail($oneEmployee['email']);
+//        $dtoEmployee->setJob($oneEmployee['job']);
+        var_dump($oneEmployee);
+        return $dtoEmployee;
+    }
 
 }
