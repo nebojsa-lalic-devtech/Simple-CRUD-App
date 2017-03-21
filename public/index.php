@@ -7,24 +7,24 @@ use app\NL\Models\Employee\Employee;
 use app\NL\Models\Company\Company;
 use app\NL\Models\Project\Project;
 use app\NL\database\Database;
+use app\NL\Models\Employee\EmployeeService;
 
 $klein = new Klein();
-
 $smarty = new Smarty();
-
 $database = new Database();
+$employeeService = new EmployeeService();
 
-$klein->respond('GET', '/', function () use ($smarty) {
-    $user = new Employee('Nebojsa', 'Lalic', 'nebojsa.lalic@devtechgroup.com', 'Software developer');
-    $user2 = new Employee('Petar', 'Petrovic', 'petarpetrovic@gmail.com', 'QA');
-    $user3 = new Employee('X', 'Man', 'xman@yahoo.com', 'Project manager');
-
-    $smarty->assign('userDetails', $user->getUserDetails());
-    $smarty->assign('user2Details', $user2->getUserDetails());
-    $smarty->assign('user3Details', $user3->getUserDetails());
-
-    return $smarty->display('templates/index.tpl');
-});
+//$klein->respond('GET', '/', function () use ($smarty) {
+//    $user = new Employee('Nebojsa', 'Lalic', 'nebojsa.lalic@devtechgroup.com', 'Software developer');
+//    $user2 = new Employee('Petar', 'Petrovic', 'petarpetrovic@gmail.com', 'QA');
+//    $user3 = new Employee('X', 'Man', 'xman@yahoo.com', 'Project manager');
+//
+//    $smarty->assign('userDetails', $user->getUserDetails());
+//    $smarty->assign('user2Details', $user2->getUserDetails());
+//    $smarty->assign('user3Details', $user3->getUserDetails());
+//
+//    return $smarty->display('templates/index.tpl');
+//});
 
 $klein->respond('GET', '/about', function () use ($smarty) {
     $company = new Company('DevTech', array('Mihajla Pupina 12', 'Janka Cmelika 7'), 'Information Technology');
@@ -68,6 +68,11 @@ $klein->respond('POST', '/mongodb', function () use ($database) {
     $database->getDatabaseConnection()->executeBulkWrite('test.guest', $bulk, $writeConcern);
 
     var_dump($document1);
+});
+
+$klein->respond('GET', '/', function () use ($employeeService, $smarty) {
+    $smarty->assign('employeeArray', $employeeService->getAllEmployees());
+    return $smarty->display('templates/index.tpl');
 });
 
 $klein->dispatch();

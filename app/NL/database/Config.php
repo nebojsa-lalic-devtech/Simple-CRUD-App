@@ -9,7 +9,7 @@ class Config
      * 'mongodb' for MongoDB Database
      * 'mysql' for MySQL Database
      */
-    public $currentDbName = 'mongodb';
+    public $currentDbName = 'mysql';
     
     public $dbHostMySql = 'localhost';
     public $dbNameMySql = 'simple-crud-app';
