@@ -14,14 +14,14 @@ class EmployeeService extends Database implements IEmployeeService
     {
         $rows = array();
         if ($this->getCurrentDb() == 'mysql') {
-            $query = "SELECT * FROM `simple-crud-app`.employee";
-            $results = $this->getDatabaseConnection()->query($query);
+            $statement = $this->getDatabaseConnection()->prepare("SELECT * FROM `simple-crud-app`.employee");
+            $statement->execute();
 
-            if ($results == false) {
+            if ($statement == false) {
                 throw new \Exception("Can't get table content!");
             }
 
-            while ($row = $results->fetch(\PDO::FETCH_ASSOC)) {
+            while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {
                 $rows[] = $row;
             }
         }
@@ -34,23 +34,27 @@ class EmployeeService extends Database implements IEmployeeService
 
     public function deleteEmployee($id)
     {
-        $query = "DELETE FROM employee WHERE id = $id";
-        $result = $this->getDatabaseConnection()->query($query);
+        $statement = $this->getDatabaseConnection()->prepare("DELETE FROM employee WHERE id = :id");
+        $statement->execute(array(
+            'id' => $id
+        ));
 
-        if ($result == false) {
-            echo 'Error: cannot delete id ' . $id . ' from table ' . $table;
+        if ($statement == false) {
+            echo 'Error: cannot delete item with id ' . $id;
             return false;
         } else {
-            echo 'Item with id: ' . $id . ' deleted from table: ' . $table . ' in database!';
+            echo 'Item with id: ' . $id . ' successfully deleted from database!';
             return true;
         }
     }
 
     public function getOneEmployee($id)
     {
-        $query = "SELECT * FROM employee WHERE id=$id LIMIT 1";
-        $result = $this->getDatabaseConnection()->query($query);
-        $oneEmployee = $result->fetch(\PDO::FETCH_ASSOC);
+        $statement = $this->getDatabaseConnection()->prepare("SELECT * FROM employee WHERE id=:id LIMIT 1");
+        $statement->execute(array(
+            'id' => $id
+        ));
+        $oneEmployee = $statement->fetch(\PDO::FETCH_ASSOC);
 
         return $oneEmployee;
     }
@@ -58,9 +62,7 @@ class EmployeeService extends Database implements IEmployeeService
     public function createEmployee()
     {
         if (isset($_POST['Submit'])) {
-            $connection = $this->getDatabaseConnection();
-            $statement = $connection->prepare("INSERT INTO `simple-crud-app`.`employee` (`first_name`, `last_name`, `email`, `job`) VALUES (:first_name, :last_name, :email, :job)");
-
+            $statement = $this->getDatabaseConnection()->prepare("INSERT INTO `simple-crud-app`.`employee` (`first_name`, `last_name`, `email`, `job`) VALUES (:first_name, :last_name, :email, :job)");
             $statement->execute(array(
                 'first_name' => $_POST['first_name'] ? $_POST['first_name'] : null,
                 'last_name' => $_POST['last_name'] ? $_POST['last_name'] : null,
@@ -70,5 +72,10 @@ class EmployeeService extends Database implements IEmployeeService
             
             echo 'New Employee created successfully!';
         }
+    }
+
+    public function updateEmployee($id)
+    {
+        // TODO: Implement updateEmployee() method.
     }
 }
