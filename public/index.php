@@ -91,7 +91,7 @@ $klein->respond('GET', '/[:id]', function ($request) use ($employeeService, $sma
 //CREATE Employee
 $klein->respond('POST', '/', function () use ($employeeService, $smarty) {
     $employeeService->createEmployee();
-    return $smarty->display('templates/index.tpl');
+    return $smarty->display('templates/createdEmployee.tpl');
 });
 
 $klein->dispatch();
