@@ -54,4 +54,21 @@ class EmployeeService extends Database implements IEmployeeService
 
         return $oneEmployee;
     }
+
+    public function createEmployee()
+    {
+        if (isset($_POST['Submit'])) {
+            $connection = $this->getDatabaseConnection();
+            $statement = $connection->prepare("INSERT INTO `simple-crud-app`.`employee` (`first_name`, `last_name`, `email`, `job`) VALUES (:first_name, :last_name, :email, :job)");
+
+            $statement->execute(array(
+                'first_name' => $_POST['first_name'] ? $_POST['first_name'] : null,
+                'last_name' => $_POST['last_name'] ? $_POST['last_name'] : null,
+                'email' => $_POST['email'],
+                'job' => $_POST['job']
+            ));
+            
+            echo 'New Employee created successfully!';
+        }
+    }
 }
