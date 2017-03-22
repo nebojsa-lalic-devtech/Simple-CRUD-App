@@ -8,5 +8,5 @@ interface IEmployeeService
     public function deleteEmployee($id);
     public function getOneEmployee($id);
     public function createEmployee();
-    public function updateEmployee($id);
+    public function updateEmployee();
 }

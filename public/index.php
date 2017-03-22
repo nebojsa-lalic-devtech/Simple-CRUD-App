@@ -3,7 +3,6 @@
 require_once '../vendor/autoload.php';
 
 use Klein\Klein;
-use app\NL\Models\Employee\Employee;
 use app\NL\Models\Company\Company;
 use app\NL\Models\Project\Project;
 use app\NL\database\Database;
@@ -14,17 +13,56 @@ $smarty = new Smarty();
 $database = new Database();
 $employeeService = new EmployeeService();
 
-//$klein->respond('GET', '/', function () use ($smarty) {
-//    $user = new Employee('Nebojsa', 'Lalic', 'nebojsa.lalic@devtechgroup.com', 'Software developer');
-//    $user2 = new Employee('Petar', 'Petrovic', 'petarpetrovic@gmail.com', 'QA');
-//    $user3 = new Employee('X', 'Man', 'xman@yahoo.com', 'Project manager');
-//
-//    $smarty->assign('userDetails', $user->getUserDetails());
-//    $smarty->assign('user2Details', $user2->getUserDetails());
-//    $smarty->assign('user3Details', $user3->getUserDetails());
-//
-//    return $smarty->display('templates/index.tpl');
-//});
+//*********************************************************************
+//***************************** CRUD START ****************************
+//*********************************************************************
+//GET ALL Employees
+$klein->respond('GET', '/', function () use ($employeeService, $smarty) {
+    $smarty->assign('employeeArray', $employeeService->getAllEmployees());
+    return $smarty->display('templates/index.tpl');
+});
+
+//GET ONE Employee
+$klein->respond('GET', '/[:id]', function ($request) use ($employeeService, $smarty) {
+    $employee = $employeeService->getOneEmployee($request->id);
+    $smarty->assign('employeeId', $request->id);
+    $smarty->assign('employee', $employee);
+    return $smarty->display('templates/employeeById.tpl');
+});
+
+//CREATE Employee
+$klein->respond('POST', '/employee/create', function () use ($employeeService, $smarty) {
+    $employeeService->createEmployee();
+    return $smarty->display('templates/createdEmployee.tpl');
+});
+
+//UPDATE Employee
+$klein->respond('POST', '/employee/update', function () use ($employeeService, $smarty) {
+    $employeeService->updateEmployee();
+    return $smarty->display('templates/updatedEmployee.tpl');
+});
+
+//DELETE Employee
+$klein->respond('DELETE', '/[:id]', function ($request) use ($employeeService, $smarty) {
+    $employeeService->deleteEmployee($request->id);
+});
+//*********************************************************************
+//***************************** CRUD END ******************************
+//*********************************************************************
+
+//*********************************************************************
+//****************************** ROUTES *******************************
+//*********************************************************************
+
+//page with form for create new Employee
+$klein->respond('GET', '/employee/create', function () use ($smarty) {
+    return $smarty->display('templates/createEmployee.tpl');
+});
+
+//page with form for update excisting Employee
+$klein->respond('GET', '/employee/update', function () use ($smarty) {
+    return $smarty->display('templates/updateEmployee.tpl');
+});
 
 $klein->respond('GET', '/about', function () use ($smarty) {
     $company = new Company('DevTech', array('Mihajla Pupina 12', 'Janka Cmelika 7'), 'Information Technology');
@@ -68,30 +106,6 @@ $klein->respond('POST', '/mongodb', function () use ($database) {
     $database->getDatabaseConnection()->executeBulkWrite('test.guest', $bulk, $writeConcern);
 
     var_dump($document1);
-});
-//GET ALL Employees
-$klein->respond('GET', '/', function () use ($employeeService, $smarty) {
-    $smarty->assign('employeeArray', $employeeService->getAllEmployees());
-    return $smarty->display('templates/index.tpl');
-});
-
-//DELETE Employee
-$klein->respond('DELETE', '/[:id]', function ($request) use ($employeeService, $smarty) {
-    $employeeService->deleteEmployee($request->id);
-});
-
-//GET ONE Employee
-$klein->respond('GET', '/[:id]', function ($request) use ($employeeService, $smarty) {
-    $employee = $employeeService->getOneEmployee($request->id);
-    $smarty->assign('employeeId', $request->id);
-    $smarty->assign('employee', $employee);
-    return $smarty->display('templates/employeeById.tpl');
-});
-
-//CREATE Employee
-$klein->respond('POST', '/', function () use ($employeeService, $smarty) {
-    $employeeService->createEmployee();
-    return $smarty->display('templates/createdEmployee.tpl');
 });
 
 $klein->dispatch();

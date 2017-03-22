@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Employee Action</title>
+    <title>Updated Employee</title>
 </head>
 <body>
 <br><br>
