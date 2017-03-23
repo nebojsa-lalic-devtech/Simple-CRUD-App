@@ -20,7 +20,6 @@ class EmployeeService extends Database implements IEmployeeService
         $this->db = new Database();
     }
 
-
     /**
      * @return array
      * @throws \Exception
@@ -32,8 +31,8 @@ class EmployeeService extends Database implements IEmployeeService
             $statement = $this->db->getDatabaseConnection()->prepare("SELECT * FROM `simple-crud-app`.employee");
             $statement->execute();
 
-            if ($statement == false) {
-                throw new \Exception("Can't get table content!");
+            if (!$statement->rowCount() > 0) {
+                throw new \Exception("***** Can't get table content! EMPTY TABLE! *****");
             }
 
             while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {

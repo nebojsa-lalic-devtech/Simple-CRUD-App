@@ -32,5 +32,4 @@ class Validation extends Database
             throw new \UnexpectedValueException("***** ID: '$id'', DOES NOT EXCIST IN DATABASE *****");
         }
     }
-
 }
