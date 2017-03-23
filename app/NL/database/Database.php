@@ -40,7 +40,7 @@ class Database
                 self::$connection = $this->connectToMongoDatabase();
                 break;
             default:
-                throw new ConnectionException('***** BASE YOU SPECIFY DO NOT EXCIST *****');
+                throw new ConnectionException('***** BASE YOU SPECIFY DOES NOT EXIST *****');
                 break;
         }
     }

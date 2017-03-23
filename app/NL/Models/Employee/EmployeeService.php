@@ -3,9 +3,24 @@
 namespace app\NL\Models\Employee;
 
 use app\NL\database\Database;
+use app\NL\validation\Validation;
 
 class EmployeeService extends Database implements IEmployeeService
 {
+    private $validation;
+    private $db;
+
+    /**
+     * EmployeeService constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->validation = new Validation();
+        $this->db = new Database();
+    }
+
+
     /**
      * @return array
      * @throws \Exception
@@ -14,7 +29,7 @@ class EmployeeService extends Database implements IEmployeeService
     {
         $rows = array();
         if ($this->getCurrentDb() == 'mysql') {
-            $statement = $this->getDatabaseConnection()->prepare("SELECT * FROM `simple-crud-app`.employee");
+            $statement = $this->db->getDatabaseConnection()->prepare("SELECT * FROM `simple-crud-app`.employee");
             $statement->execute();
 
             if ($statement == false) {
@@ -34,8 +49,9 @@ class EmployeeService extends Database implements IEmployeeService
 
     public function deleteEmployee($id)
     {
+        $this->validation->validateId($id);
         try {
-            $statement = $this->getDatabaseConnection()->prepare("DELETE FROM employee WHERE id = :id");
+            $statement = $this->db->getDatabaseConnection()->prepare("DELETE FROM employee WHERE id = :id");
             $statement->execute(array(
                 'id' => $id
             ));
@@ -47,8 +63,9 @@ class EmployeeService extends Database implements IEmployeeService
 
     public function getOneEmployee($id)
     {
+        $this->validation->validateId($id);
         try {
-            $statement = $this->getDatabaseConnection()->prepare("SELECT * FROM employee WHERE id=:id LIMIT 1");
+            $statement = $this->db->getDatabaseConnection()->prepare("SELECT * FROM employee WHERE id=:id LIMIT 1");
             $statement->execute(array(
                 'id' => $id
             ));
@@ -64,7 +81,7 @@ class EmployeeService extends Database implements IEmployeeService
     {
         try {
             if (isset($_POST['Submit'])) {
-                $connection = $this->getDatabaseConnection();
+                $connection = $this->db->getDatabaseConnection();
                 $statement = $connection->prepare("INSERT INTO `simple-crud-app`.`employee` (`id`, `first_name`, `last_name`, `email`, `job`) VALUES (:id, :first_name, :last_name, :email, :job)");
                 $id = $connection->lastInsertId();
                 $statement->execute(array(
@@ -84,11 +101,13 @@ class EmployeeService extends Database implements IEmployeeService
 
     public function updateEmployee()
     {
+        $id = $_POST['id'];
+        $this->validation->validateId($id);
         try {
             if (isset($_POST['Update'])) {
-                $statement = $this->getDatabaseConnection()->prepare("UPDATE `simple-crud-app`.`employee` SET `first_name`=:first_name, `last_name`=:last_name, `email`=:email, `job`=:job WHERE `id`=:id");
+                $statement = $this->db->getDatabaseConnection()->prepare("UPDATE `simple-crud-app`.`employee` SET `first_name`=:first_name, `last_name`=:last_name, `email`=:email, `job`=:job WHERE `id`=:id");
                 $statement->execute(array(
-                    'id' => $_POST['id'],
+                    'id' => $id,
                     'first_name' => $_POST['first_name'] ? $_POST['first_name'] : null,
                     'last_name' => $_POST['last_name'] ? $_POST['last_name'] : null,
                     'email' => $_POST['email'],

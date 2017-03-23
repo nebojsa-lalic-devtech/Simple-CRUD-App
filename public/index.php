@@ -13,9 +13,7 @@ $smarty = new Smarty();
 $database = new Database();
 $employeeService = new EmployeeService();
 
-//*********************************************************************
 //***************************** CRUD START ****************************
-//*********************************************************************
 //GET ALL Employees
 $klein->respond('GET', '/', function () use ($employeeService, $smarty) {
     $smarty->assign('employeeArray', $employeeService->getAllEmployees());
@@ -46,14 +44,9 @@ $klein->respond('POST', '/employee/update', function () use ($employeeService, $
 $klein->respond('DELETE', '/[:id]', function ($request) use ($employeeService, $smarty) {
     $employeeService->deleteEmployee($request->id);
 });
-//*********************************************************************
 //***************************** CRUD END ******************************
-//*********************************************************************
 
-//*********************************************************************
 //****************************** ROUTES *******************************
-//*********************************************************************
-
 //page with form for create new Employee
 $klein->respond('GET', '/employee/create', function () use ($smarty) {
     return $smarty->display('templates/createEmployee.tpl');
@@ -80,23 +73,6 @@ $klein->respond('GET', '/project', function () use ($smarty) {
     return $smarty->display('templates/project.tpl');
 });
 
-$klein->onHttpError(function () use ($smarty) {
-    $current_uri = $_SERVER['REQUEST_URI'];
-
-    $errorMessage = "Oooups...your URL: \"" . $current_uri . "\" does not exist!";
-
-    $smarty->assign('errorMessage', $errorMessage);
-
-    return $smarty->display('templates/404.tpl');
-});
-
-//TEMPORARY TEST MySQL Connection
-$klein->respond('POST', '/mysql', function () use ($database) {
-    $queryString = "INSERT INTO employee (first_name, last_name, email, job) VALUES (\"111Test First Name\", \"Test Last Name\", \"ln@gmail.com\", \"developer\")";
-    $database->getDatabaseConnection()->query($queryString);
-});
-
-
 //TEMPORARY TEST Mongo Connection
 $klein->respond('POST', '/mongodb', function () use ($database) {
     $bulk = new \MongoDB\Driver\BulkWrite();
@@ -106,6 +82,17 @@ $klein->respond('POST', '/mongodb', function () use ($database) {
     $database->getDatabaseConnection()->executeBulkWrite('test.guest', $bulk, $writeConcern);
 
     var_dump($document1);
+});
+
+//URL Exception
+$klein->onHttpError(function () use ($smarty) {
+    $current_uri = $_SERVER['REQUEST_URI'];
+
+    $errorMessage = "Oooups...your URL: \"" . $current_uri . "\" does not exist!";
+
+    $smarty->assign('errorMessage', $errorMessage);
+
+    return $smarty->display('templates/404.tpl');
 });
 
 $klein->dispatch();
