@@ -56,7 +56,7 @@ class Database
                 self::$connection = new \PDO($dataSourceName, $this->user, $this->pass);
                 self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (PDOException $ex) {
-                echo 'Connection to MySQL base failed: ' . $ex->getMessage();
+                echo '***** CONNECTION TO MYSQL BASE FAILED *****' . $ex->getMessage();
             }
         }
         return self::$connection;
@@ -71,7 +71,7 @@ class Database
             try {
                 self::$connection = new Manager('mongodb://' . $this->dbHost . ':27017');
             } catch (ConnectionException $ex) {
-                echo 'Connection to MongoDB base failed: ' . $ex->getMessage();
+                echo '***** CONNECTION TO MONGODB BASE FAILED *****' . $ex->getMessage();
             }
         }
         return self::$connection;

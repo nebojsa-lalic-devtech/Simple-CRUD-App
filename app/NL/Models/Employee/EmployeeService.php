@@ -32,7 +32,7 @@ class EmployeeService extends Database implements IEmployeeService
             $statement->execute();
 
             if (!$statement->rowCount() > 0) {
-                throw new \Exception("***** Can't get table content! EMPTY TABLE! *****");
+                throw new \Exception("***** CAN'T GET TABLE CONTENT! EMPTY TABLE! *****");
             }
 
             while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {
@@ -54,9 +54,9 @@ class EmployeeService extends Database implements IEmployeeService
             $statement->execute(array(
                 'id' => $id
             ));
-            echo 'Item with id: ' . $id . ' successfully deleted from database!';
+            echo 'ITEM WITH ID: ' . $id . ' SUCCESSFULLY DEVETED FROM DATABASE!';
         } catch (\PDOException $ex) {
-            echo 'Can\'t delete Employee with id: ' . $id . $ex->getMessage();
+            echo '***** CAN\'T DELETE EMPLOYEE WITH ID: ' . $id . ' *****' . $ex->getMessage();
         }
     }
 
@@ -72,7 +72,7 @@ class EmployeeService extends Database implements IEmployeeService
 
             return $oneEmployee;
         } catch (\PDOException $ex) {
-            echo 'Can\'t get Employee with id: ' . $id . $ex->getMessage();
+            echo '***** CAN\'T GET EMPLOYEE WITH ID: ' . $id . ' *****' . $ex->getMessage();
         }
     }
 
@@ -91,10 +91,10 @@ class EmployeeService extends Database implements IEmployeeService
                     'job' => $_POST['job']
                 ));
 
-                echo 'New Employee created successfully!';
+                echo 'NEW EMPLOYEE CREATED SUCCESSFULLY!';
             }
         } catch (\PDOException $ex) {
-            echo 'Can\'t create Employee! ' . $ex->getMessage();
+            echo '***** CAN\'T CREATE EMPLOYEE! *****' . $ex->getMessage();
         }
     }
 
@@ -113,10 +113,10 @@ class EmployeeService extends Database implements IEmployeeService
                     'job' => $_POST['job']
                 ));
 
-                echo 'Employee with id: ' . $_POST['id'] . ' updated successfully!';
+                echo 'EMPLOYEE WITH ID: ' . $_POST['id'] . ' UPDATED SUCCESSFULLY!';
             }
         } catch (\PDOException $ex) {
-            echo 'Can\'t update Employee with id: ' . $_POST['id'] . $ex->getMessage();
+            echo '***** CAN\'T UPDATE EMPLOYEE WITH ID: ' . $_POST['id'] . ' *****' .$ex->getMessage();
         }
     }
 }
