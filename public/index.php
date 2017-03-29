@@ -1,5 +1,5 @@
 <?php
-
+require_once '../app/NL/bootstrap/bootstrap.php';
 require_once '../vendor/autoload.php';
 
 use Klein\Klein;
@@ -7,6 +7,7 @@ use app\NL\Models\Employee\Employee;
 use app\NL\Models\Company\Company;
 use app\NL\Models\Project\Project;
 use app\NL\database\Database;
+use MongoDB\Driver\BulkWrite;
 
 $klein = new Klein();
 
@@ -54,18 +55,18 @@ $klein->onHttpError(function () use ($smarty) {
 
 //TEMPORARY TEST MySQL Connection
 $klein->respond('POST', '/mysql', function () use ($database) {
-    $queryString = "INSERT INTO employee (first_name, last_name, email, job) VALUES (\"111Test First Name\", \"Test Last Name\", \"ln@gmail.com\", \"developer\")";
-    $database->getDatabaseConnection()->query($queryString);
+    $queryString = "INSERT INTO employee (first_name, last_name, email, job) VALUES (\"2222TEST First Name\", \"Test Last Name\", \"ln@gmail.com\", \"developer\")";
+    $database->connectToDatabase()->query($queryString);
 });
 
 
 //TEMPORARY TEST Mongo Connection
 $klein->respond('POST', '/mongodb', function () use ($database) {
-    $bulk = new \MongoDB\Driver\BulkWrite();
-    $document1 = ['first_name' => 'Nebojsa', 'last_name' => 'Lalic', 'job' => 'developer'];
+    $bulk = new BulkWrite();
+    $document1 = ['id' => '123123', 'first_name' => 'Nebojsa', 'last_name' => 'Lalic', 'job' => 'developer'];
     $bulk->insert($document1);
     $writeConcern = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 1000);
-    $database->getDatabaseConnection()->executeBulkWrite('test.guest', $bulk, $writeConcern);
+    $database->connectToDatabase()->executeBulkWrite('test.guest', $bulk, $writeConcern);
 
     var_dump($document1);
 });
