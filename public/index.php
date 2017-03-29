@@ -1,5 +1,6 @@
 <?php
 
+require_once '../app/NL/bootstrap/bootstrap.php';
 require_once '../vendor/autoload.php';
 
 use Klein\Klein;
@@ -79,7 +80,7 @@ $klein->respond('POST', '/mongodb', function () use ($database) {
     $document1 = ['first_name' => 'Nebojsa', 'last_name' => 'Lalic', 'job' => 'developer'];
     $bulk->insert($document1);
     $writeConcern = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 1000);
-    $database->getDatabaseConnection()->executeBulkWrite('test.guest', $bulk, $writeConcern);
+    $database->connectToDatabase()->executeBulkWrite('test.guest', $bulk, $writeConcern);
 
     var_dump($document1);
 });

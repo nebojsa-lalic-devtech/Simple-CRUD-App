@@ -13,14 +13,13 @@ class Validation extends Database
      */
     public function __construct()
     {
-        parent::__construct();
         $this->db = new Database();
     }
 
 
     public function validateId($id)
     {
-        $statement = $this->db->getDatabaseConnection()->prepare("SELECT id FROM `simple-crud-app`.`employee`");
+        $statement = $this->db->connectToDatabase()->prepare("SELECT id FROM `simple-crud-app`.`employee`");
         $statement->execute();
         $idsArray = array();
         while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {

@@ -5,7 +5,7 @@ namespace app\NL\Models\Employee;
 use app\NL\database\Database;
 use app\NL\validation\Validation;
 
-class EmployeeService extends Database implements IEmployeeService
+class EmployeeService implements IEmployeeService
 {
     private $validation;
     private $db;
@@ -15,7 +15,6 @@ class EmployeeService extends Database implements IEmployeeService
      */
     public function __construct()
     {
-        parent::__construct();
         $this->validation = new Validation();
         $this->db = new Database();
     }
@@ -27,21 +26,15 @@ class EmployeeService extends Database implements IEmployeeService
     public function getAllEmployees()
     {
         $rows = array();
-        if ($this->getCurrentDb() == 'mysql') {
-            $statement = $this->db->getDatabaseConnection()->prepare("SELECT * FROM `simple-crud-app`.employee");
-            $statement->execute();
+        $statement = $this->db->connectToDatabase()->prepare("SELECT * FROM `simple-crud-app`.employee");
+        $statement->execute();
 
-            if (!$statement->rowCount() > 0) {
-                throw new \Exception("***** CAN'T GET TABLE CONTENT! EMPTY TABLE! *****");
-            }
-
-            while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {
-                $rows[] = $row;
-            }
+        if (!$statement->rowCount() > 0) {
+            throw new \Exception("***** CAN'T GET TABLE CONTENT! EMPTY TABLE! *****");
         }
 
-        if ($this->getCurrentDb() == 'mongodb') {
-            echo 'mongodb get all';
+        while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {
+            $rows[] = $row;
         }
         return $rows;
     }
@@ -50,7 +43,7 @@ class EmployeeService extends Database implements IEmployeeService
     {
         $this->validation->validateId($id);
         try {
-            $statement = $this->db->getDatabaseConnection()->prepare("DELETE FROM employee WHERE id = :id");
+            $statement = $this->db->connectToDatabase()->prepare("DELETE FROM employee WHERE id = :id");
             $statement->execute(array(
                 'id' => $id
             ));
@@ -64,7 +57,7 @@ class EmployeeService extends Database implements IEmployeeService
     {
         $this->validation->validateId($id);
         try {
-            $statement = $this->db->getDatabaseConnection()->prepare("SELECT * FROM employee WHERE id=:id LIMIT 1");
+            $statement = $this->db->connectToDatabase()->prepare("SELECT * FROM employee WHERE id=:id LIMIT 1");
             $statement->execute(array(
                 'id' => $id
             ));
@@ -80,7 +73,7 @@ class EmployeeService extends Database implements IEmployeeService
     {
         try {
             if (isset($_POST['Submit'])) {
-                $connection = $this->db->getDatabaseConnection();
+                $connection = $this->db->connectToDatabase();
                 $statement = $connection->prepare("INSERT INTO `simple-crud-app`.`employee` (`id`, `first_name`, `last_name`, `email`, `job`) VALUES (:id, :first_name, :last_name, :email, :job)");
                 $id = $connection->lastInsertId();
                 $statement->execute(array(
@@ -104,7 +97,7 @@ class EmployeeService extends Database implements IEmployeeService
         $this->validation->validateId($id);
         try {
             if (isset($_POST['Update'])) {
-                $statement = $this->db->getDatabaseConnection()->prepare("UPDATE `simple-crud-app`.`employee` SET `first_name`=:first_name, `last_name`=:last_name, `email`=:email, `job`=:job WHERE `id`=:id");
+                $statement = $this->db->connectToDatabase()->prepare("UPDATE `simple-crud-app`.`employee` SET `first_name`=:first_name, `last_name`=:last_name, `email`=:email, `job`=:job WHERE `id`=:id");
                 $statement->execute(array(
                     'id' => $id,
                     'first_name' => $_POST['first_name'] ? $_POST['first_name'] : null,
@@ -116,7 +109,7 @@ class EmployeeService extends Database implements IEmployeeService
                 echo 'EMPLOYEE WITH ID: ' . $_POST['id'] . ' UPDATED SUCCESSFULLY!';
             }
         } catch (\PDOException $ex) {
-            echo '***** CAN\'T UPDATE EMPLOYEE WITH ID: ' . $_POST['id'] . ' *****' .$ex->getMessage();
+            echo '***** CAN\'T UPDATE EMPLOYEE WITH ID: ' . $_POST['id'] . ' *****' . $ex->getMessage();
         }
     }
 }

@@ -2,99 +2,31 @@
 
 namespace app\NL\database;
 
-use MongoDB\Driver\Exception\ConnectionException;
-use MongoDB\Driver\Manager;
-use PDO;
-use PDOException;
-
 class Database
 {
-    private $dbHost;
-    private $dbName;
-    private $user;
-    private $pass;
-    private $currentDb;
-
     private static $connection = null;
 
-    /**
-     * Database constructor.
-     */
-    public function __construct()
+    public function connectToDatabase()
     {
-        $config = new Config();
-        $this->currentDb = $config->currentDbName;
-        switch ($this->currentDb) {
+        switch ('mysql') {
             case 'mysql':
-                $this->dbHost = $config->dbHostMySql;
-                $this->dbName = $config->dbNameMySql;
-                $this->user = $config->dbUserMySql;
-                $this->pass = $config->dbPassMySql;
-                self::$connection = $this->connectToMySQLDatabase();
+                $dbAdapter = new MysqlAdapter();
+                self::$connection = $dbAdapter->createConnection();
+                return self::$connection;
                 break;
             case 'mongodb':
-                $this->dbHost = $config->dbHostMongoDb;
-                $this->dbName = $config->dbNameMongoDb;
-                $this->user = $config->dbUserMongoDb;
-                $this->pass = $config->dbPassMondoDb;
-                self::$connection = $this->connectToMongoDatabase();
+                $dbAdapter = new MongoAdapter();
+                self::$connection = $dbAdapter->createConnection();
+                return self::$connection;
                 break;
             default:
-                throw new ConnectionException('***** BASE YOU SPECIFY DOES NOT EXIST *****');
+                throw new \Exception('***** BASE YOU SPECIFY DO NOT EXCIST *****');
                 break;
         }
-    }
-
-    /**
-     * @return null|PDO
-     */
-    private function connectToMySQLDatabase()
-    {
-        if (self::$connection == null) {
-            try {
-                $dataSourceName = 'mysql:host=' . $this->dbHost . ';dbname=' . $this->dbName;
-                self::$connection = new \PDO($dataSourceName, $this->user, $this->pass);
-                self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            } catch (PDOException $ex) {
-                echo '***** CONNECTION TO MYSQL BASE FAILED *****' . $ex->getMessage();
-            }
-        }
-        return self::$connection;
-    }
-
-    /**
-     * @return Manager|null
-     */
-    private function connectToMongoDatabase()
-    {
-        if (self::$connection == null) {
-            try {
-                self::$connection = new Manager('mongodb://' . $this->dbHost . ':27017');
-            } catch (ConnectionException $ex) {
-                echo '***** CONNECTION TO MONGODB BASE FAILED *****' . $ex->getMessage();
-            }
-        }
-        return self::$connection;
-    }
-
-    /**
-     * @return Manager|null|PDO
-     */
-    public function getDatabaseConnection()
-    {
-        return self::$connection;
     }
 
     public static function disconnect()
     {
         self::$connection = null;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCurrentDb()
-    {
-        return $this->currentDb;
     }
 }
