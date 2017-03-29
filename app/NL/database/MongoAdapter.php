@@ -7,6 +7,10 @@ use MongoDB\Driver\Manager;
 
 class MongoAdapter implements IAdapter
 {
+
+    /**
+     * @return Manager
+     */
     public function createConnection()
     {
         try {
@@ -15,5 +19,13 @@ class MongoAdapter implements IAdapter
         } catch (ConnectionException $ex) {
             echo 'Connection to MongoDB base failed: ' . $ex->getMessage();
         }
+    }
+
+    /**
+     * @param $query
+     */
+    public function execute($query)
+    {
+        self::createConnection()->executeBulkWrite($query);
     }
 }

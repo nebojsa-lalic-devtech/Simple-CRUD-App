@@ -55,8 +55,8 @@ $klein->onHttpError(function () use ($smarty) {
 
 //TEMPORARY TEST MySQL Connection
 $klein->respond('POST', '/mysql', function () use ($database) {
-    $queryString = "INSERT INTO employee (first_name, last_name, email, job) VALUES (\"2222TEST First Name\", \"Test Last Name\", \"ln@gmail.com\", \"developer\")";
-    $database->connectToDatabase()->query($queryString);
+    $queryString = "INSERT INTO employee (first_name, last_name, email, job) VALUES (\"8998 First Name\", \"Test Last Name\", \"ln@gmail.com\", \"developer\")";
+    $database->connectToDatabase()->execute($queryString);
 });
 
 
@@ -66,7 +66,7 @@ $klein->respond('POST', '/mongodb', function () use ($database) {
     $document1 = ['id' => '123123', 'first_name' => 'Nebojsa', 'last_name' => 'Lalic', 'job' => 'developer'];
     $bulk->insert($document1);
     $writeConcern = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 1000);
-    $database->connectToDatabase()->executeBulkWrite('test.guest', $bulk, $writeConcern);
+    $database->connectToDatabase()->execute('test.guest', $bulk, $writeConcern);
 
     var_dump($document1);
 });
