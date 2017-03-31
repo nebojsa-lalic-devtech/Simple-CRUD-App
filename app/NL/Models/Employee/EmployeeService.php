@@ -26,7 +26,7 @@ class EmployeeService implements IEmployeeService
     public function getAllEmployees()
     {
         $rows = array();
-        $statement = $this->db->connectToDatabase()->prepare("SELECT * FROM `simple-crud-app`.employee");
+        $statement = $this->db->getDatabase()->createConnection()->prepare("SELECT * FROM `simple-crud-app`.employee");
         $statement->execute();
 
         if (!$statement->rowCount() > 0) {
@@ -41,13 +41,13 @@ class EmployeeService implements IEmployeeService
 
     public function deleteEmployee($id)
     {
-        $this->validation->validateId($id);
+        //$this->validation->validateId($id);
         try {
-            $statement = $this->db->connectToDatabase()->prepare("DELETE FROM employee WHERE id = :id");
+            $statement = $this->db->getDatabase()->createConnection()->prepare("DELETE FROM employee WHERE id = :id");
             $statement->execute(array(
                 'id' => $id
             ));
-            echo 'ITEM WITH ID: ' . $id . ' SUCCESSFULLY DEVETED FROM DATABASE!';
+            echo 'ITEM WITH ID: ' . $id . ' SUCCESSFULLY DELETED FROM DATABASE!';
         } catch (\PDOException $ex) {
             echo '***** CAN\'T DELETE EMPLOYEE WITH ID: ' . $id . ' *****' . $ex->getMessage();
         }
@@ -57,7 +57,7 @@ class EmployeeService implements IEmployeeService
     {
         $this->validation->validateId($id);
         try {
-            $statement = $this->db->connectToDatabase()->prepare("SELECT * FROM employee WHERE id=:id LIMIT 1");
+            $statement = $this->db->getDatabase()->createConnection()->prepare("SELECT * FROM employee WHERE id=:id LIMIT 1");
             $statement->execute(array(
                 'id' => $id
             ));
@@ -73,7 +73,7 @@ class EmployeeService implements IEmployeeService
     {
         try {
             if (isset($_POST['Submit'])) {
-                $connection = $this->db->connectToDatabase();
+                $connection = $this->db->getDatabase()->createConnection();
                 $statement = $connection->prepare("INSERT INTO `simple-crud-app`.`employee` (`id`, `first_name`, `last_name`, `email`, `job`) VALUES (:id, :first_name, :last_name, :email, :job)");
                 $id = $connection->lastInsertId();
                 $statement->execute(array(
@@ -97,7 +97,7 @@ class EmployeeService implements IEmployeeService
         $this->validation->validateId($id);
         try {
             if (isset($_POST['Update'])) {
-                $statement = $this->db->connectToDatabase()->prepare("UPDATE `simple-crud-app`.`employee` SET `first_name`=:first_name, `last_name`=:last_name, `email`=:email, `job`=:job WHERE `id`=:id");
+                $statement = $this->db->getDatabase()->createConnection()->prepare("UPDATE `simple-crud-app`.`employee` SET `first_name`=:first_name, `last_name`=:last_name, `email`=:email, `job`=:job WHERE `id`=:id");
                 $statement->execute(array(
                     'id' => $id,
                     'first_name' => $_POST['first_name'] ? $_POST['first_name'] : null,

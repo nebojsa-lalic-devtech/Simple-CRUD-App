@@ -4,7 +4,7 @@ namespace app\NL\validation;
 
 use app\NL\database\Database;
 
-class Validation extends Database
+class Validation
 {
     private $db;
 
@@ -17,9 +17,14 @@ class Validation extends Database
     }
 
 
+    /**
+     * @param $id
+     * @return bool
+     * @throws \Exception
+     */
     public function validateId($id)
     {
-        $statement = $this->db->connectToDatabase()->prepare("SELECT id FROM `simple-crud-app`.`employee`");
+        $statement = $this->db->getDatabase()->createConnection()->prepare("SELECT id FROM `simple-crud-app`.`employee`");
         $statement->execute();
         $idsArray = array();
         while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {

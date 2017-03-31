@@ -81,7 +81,7 @@ $klein->respond('POST', '/mongodb', function () use ($database) {
     $document1 = ['id' => '123123', 'first_name' => 'Nebojsa', 'last_name' => 'Lalic', 'job' => 'developer'];
     $bulk->insert($document1);
     $writeConcern = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 1000);
-    $database->connectToDatabase()->execute('test.guest', $bulk, $writeConcern);
+    $database->getDatabase()->execute('test.guest', $bulk, $writeConcern);
 });
 
 //URL Exception
