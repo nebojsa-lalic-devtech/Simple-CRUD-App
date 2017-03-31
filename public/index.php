@@ -8,6 +8,7 @@ use app\NL\Models\Company\Company;
 use app\NL\Models\Project\Project;
 use app\NL\database\Database;
 use app\NL\Models\Employee\EmployeeService;
+use MongoDB\Driver\BulkWrite;
 
 $klein = new Klein();
 $smarty = new Smarty();
@@ -76,13 +77,11 @@ $klein->respond('GET', '/project', function () use ($smarty) {
 
 //TEMPORARY TEST Mongo Connection
 $klein->respond('POST', '/mongodb', function () use ($database) {
-    $bulk = new \MongoDB\Driver\BulkWrite();
-    $document1 = ['first_name' => 'Nebojsa', 'last_name' => 'Lalic', 'job' => 'developer'];
+    $bulk = new BulkWrite();
+    $document1 = ['id' => '123123', 'first_name' => 'Nebojsa', 'last_name' => 'Lalic', 'job' => 'developer'];
     $bulk->insert($document1);
     $writeConcern = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 1000);
-    $database->connectToDatabase()->executeBulkWrite('test.guest', $bulk, $writeConcern);
-
-    var_dump($document1);
+    $database->connectToDatabase()->execute('test.guest', $bulk, $writeConcern);
 });
 
 //URL Exception

@@ -2,4 +2,4 @@
 
 namespace app\NL\bootstrap;
 
-require_once __DIR__ . '\..\database\configg.php';
+require_once __DIR__ . '\..\database\config.php';
