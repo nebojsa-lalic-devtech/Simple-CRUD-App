@@ -2,7 +2,7 @@
 
 namespace app\NL\Models\Person;
 
-class Person
+abstract class Person
 {
     private $first_name;
     private $last_name;
