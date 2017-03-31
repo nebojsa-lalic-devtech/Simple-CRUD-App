@@ -5,18 +5,20 @@ namespace app\NL\database;
 class Database
 {
     /**
-     * @return MongoAdapter|MysqlAdapter
+     * @return \MongoDB\Driver\Manager|\PDO
      * @throws \Exception
      */
     public function connectToDatabase()
     {
-        switch (CURRENT_DB) {
+        switch ('mysql') {
             case 'mysql':
-                $connection = new MysqlAdapter();
+                $adapter = new MysqlAdapter();
+                $connection = $adapter->createConnection();
                 return $connection;
                 break;
             case 'mongodb':
-                $connection = new MongoAdapter();
+                $adapter = new MongoAdapter();
+                $connection = $adapter->createConnection();
                 return $connection;
                 break;
             default:
