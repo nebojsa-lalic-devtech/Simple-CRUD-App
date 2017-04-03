@@ -50,7 +50,7 @@ class EmployeeServiceMongodb implements IEmployeeService
                 ];
                 $this->bulk->insert($query);
                 $writeConcern = new WriteConcern(WriteConcern::MAJORITY, 1000);
-                $this->db->getDatabase()->execute('test.guest', $this->bulk, $writeConcern);
+                $this->db->getDatabase()->execute(CURRENT_MONGO_TABLE, $this->bulk, $writeConcern);
 
                 echo 'NEW EMPLOYEE CREATED SUCCESSFULLY!';
             } else {

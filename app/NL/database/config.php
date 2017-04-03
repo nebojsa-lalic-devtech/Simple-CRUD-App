@@ -18,3 +18,4 @@ define('DB_HOST', 'localhost');
 define('DB_NAME', 'guest');
 define('DB_USER', 'root');
 define('DB_PASS', 'root');
+define('CURRENT_MONGO_TABLE', 'test.guest');
