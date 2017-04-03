@@ -7,14 +7,14 @@ namespace app\NL\database;
  * 'mysql' for MySQL Database
  */
 
-define('CURRENT_DB', 'mysql');
-
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'simple-crud-app');
-define('DB_USER', 'root');
-define('DB_PASS', 'root');
+define('CURRENT_DB', 'mongodb');
 
 //define('DB_HOST', 'localhost');
-//define('DB_NAME', 'guest');
+//define('DB_NAME', 'simple-crud-app');
 //define('DB_USER', 'root');
 //define('DB_PASS', 'root');
+
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'guest');
+define('DB_USER', 'root');
+define('DB_PASS', 'root');

@@ -1,19 +1,17 @@
 <?php
 
-require_once '../app/NL/bootstrap/bootstrap.php';
 require_once '../vendor/autoload.php';
+require_once '../app/NL/bootstrap/bootstrap.php';
 
 use Klein\Klein;
 use app\NL\Models\Company\Company;
 use app\NL\Models\Project\Project;
 use app\NL\database\Database;
-use app\NL\Models\Employee\EmployeeService;
 use MongoDB\Driver\BulkWrite;
 
 $klein = new Klein();
 $smarty = new Smarty();
 $database = new Database();
-$employeeService = new EmployeeService();
 
 //***************************** CRUD START ****************************
 //GET ALL Employees

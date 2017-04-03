@@ -5,7 +5,7 @@ namespace app\NL\Models\Employee;
 use app\NL\database\Database;
 use app\NL\validation\Validation;
 
-class EmployeeService implements IEmployeeService
+class EmployeeServiceMysql implements IEmployeeService
 {
     private $validation;
     private $db;
@@ -39,6 +39,10 @@ class EmployeeService implements IEmployeeService
         return $rows;
     }
 
+    /**
+     * @param $id
+     * @throws \Exception
+     */
     public function deleteEmployee($id)
     {
         //$this->validation->validateId($id);
@@ -53,6 +57,11 @@ class EmployeeService implements IEmployeeService
         }
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     * @throws \Exception
+     */
     public function getOneEmployee($id)
     {
         $this->validation->validateId($id);
@@ -69,6 +78,9 @@ class EmployeeService implements IEmployeeService
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     public function createEmployee()
     {
         try {
@@ -91,6 +103,9 @@ class EmployeeService implements IEmployeeService
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     public function updateEmployee()
     {
         $id = $_POST['id'];

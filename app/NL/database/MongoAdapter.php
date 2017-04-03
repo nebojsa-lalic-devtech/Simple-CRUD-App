@@ -19,12 +19,14 @@ class MongoAdapter implements IAdapter
             echo 'Connection to MongoDB base failed: ' . $ex->getMessage();
         }
     }
-      
+
     /**
      * @param $query
+     * @param $bulk
+     * @param $concern
      */
-    public function execute($query)
+    public function execute($query, $bulk, $concern)
     {
-        self::createConnection()->executeBulkWrite($query);
+        self::createConnection()->executeBulkWrite($query, $bulk, $concern);
     }
 }
