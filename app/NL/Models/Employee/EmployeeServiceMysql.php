@@ -8,7 +8,7 @@ use app\NL\validation\Validation;
 class EmployeeServiceMysql implements IEmployeeService
 {
     private $validation;
-    private $db;
+    private $connection;
 
     /**
      * EmployeeService constructor.
@@ -16,7 +16,8 @@ class EmployeeServiceMysql implements IEmployeeService
     public function __construct()
     {
         $this->validation = new Validation();
-        $this->db = new Database();
+        $db = new Database();
+        $this->connection = $db->getDatabase()->createConnection();
     }
 
     /**
@@ -26,7 +27,7 @@ class EmployeeServiceMysql implements IEmployeeService
     public function getAllEmployees()
     {
         $rows = array();
-        $statement = $this->db->getDatabase()->createConnection()->prepare("SELECT * FROM `simple-crud-app`.employee");
+        $statement = $this->connection->prepare("SELECT * FROM `simple-crud-app`.employee");
         $statement->execute();
 
         if (!$statement->rowCount() > 0) {
@@ -45,9 +46,9 @@ class EmployeeServiceMysql implements IEmployeeService
      */
     public function deleteEmployee($id)
     {
-        //$this->validation->validateId($id);
+        $this->validation->validateId($id);
         try {
-            $statement = $this->db->getDatabase()->createConnection()->prepare("DELETE FROM employee WHERE id = :id");
+            $statement = $this->connection->prepare("DELETE FROM employee WHERE id = :id");
             $statement->execute(array(
                 'id' => $id
             ));
@@ -66,7 +67,7 @@ class EmployeeServiceMysql implements IEmployeeService
     {
         $this->validation->validateId($id);
         try {
-            $statement = $this->db->getDatabase()->createConnection()->prepare("SELECT * FROM employee WHERE id=:id LIMIT 1");
+            $statement = $this->connection->prepare("SELECT * FROM employee WHERE id=:id LIMIT 1");
             $statement->execute(array(
                 'id' => $id
             ));
@@ -84,10 +85,9 @@ class EmployeeServiceMysql implements IEmployeeService
     public function createEmployee()
     {
         try {
-            if (isset($_POST['Submit'])) {
-                $connection = $this->db->getDatabase()->createConnection();
-                $statement = $connection->prepare("INSERT INTO `simple-crud-app`.`employee` (`id`, `first_name`, `last_name`, `email`, `job`) VALUES (:id, :first_name, :last_name, :email, :job)");
-                $id = $connection->lastInsertId();
+            if (isset($_POST['Submit']) && $_POST['first_name'] != '' && $_POST['last_name'] != '') {
+                $statement = $this->connection->prepare("INSERT INTO `simple-crud-app`.`employee` (`id`, `first_name`, `last_name`, `email`, `job`) VALUES (:id, :first_name, :last_name, :email, :job)");
+                $id = $this->connection->lastInsertId();
                 $statement->execute(array(
                     'id' => $_POST['id'] ? $_POST['id'] : $id,
                     'first_name' => $_POST['first_name'] ? $_POST['first_name'] : null,
@@ -97,6 +97,8 @@ class EmployeeServiceMysql implements IEmployeeService
                 ));
 
                 echo 'NEW EMPLOYEE CREATED SUCCESSFULLY!';
+            } else {
+                echo '***** FIELDS "FIRST NAME" & "LAST NAME" MUST BE FILLED *****';
             }
         } catch (\PDOException $ex) {
             echo '***** CAN\'T CREATE EMPLOYEE! *****' . $ex->getMessage();
@@ -111,8 +113,8 @@ class EmployeeServiceMysql implements IEmployeeService
         $id = $_POST['id'];
         $this->validation->validateId($id);
         try {
-            if (isset($_POST['Update'])) {
-                $statement = $this->db->getDatabase()->createConnection()->prepare("UPDATE `simple-crud-app`.`employee` SET `first_name`=:first_name, `last_name`=:last_name, `email`=:email, `job`=:job WHERE `id`=:id");
+            if (isset($_POST['Update']) && $_POST['first_name'] != '' && $_POST['last_name'] != '') {
+                $statement = $this->connection->prepare("UPDATE `simple-crud-app`.`employee` SET `first_name`=:first_name, `last_name`=:last_name, `email`=:email, `job`=:job WHERE `id`=:id");
                 $statement->execute(array(
                     'id' => $id,
                     'first_name' => $_POST['first_name'] ? $_POST['first_name'] : null,
@@ -122,6 +124,8 @@ class EmployeeServiceMysql implements IEmployeeService
                 ));
 
                 echo 'EMPLOYEE WITH ID: ' . $_POST['id'] . ' UPDATED SUCCESSFULLY!';
+            } else {
+                echo '***** FIELDS "FIRST NAME" & "LAST NAME" MUST BE FILLED *****';
             }
         } catch (\PDOException $ex) {
             echo '***** CAN\'T UPDATE EMPLOYEE WITH ID: ' . $_POST['id'] . ' *****' . $ex->getMessage();

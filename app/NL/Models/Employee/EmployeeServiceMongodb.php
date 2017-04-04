@@ -9,7 +9,7 @@ use MongoDB\Driver\WriteConcern;
 class EmployeeServiceMongodb implements IEmployeeService
 {
     private $bulk;
-    private $db;
+    private $connection;
 
     /**
      * EmployeeServiceMongodb constructor.
@@ -17,7 +17,8 @@ class EmployeeServiceMongodb implements IEmployeeService
     public function __construct()
     {
         $this->bulk = new BulkWrite();
-        $this->db = new Database();
+        $db = new Database();
+        $this->connection = $db->getDatabase()->createConnection();
     }
 
     public function getAllEmployees()
@@ -50,7 +51,7 @@ class EmployeeServiceMongodb implements IEmployeeService
                 ];
                 $this->bulk->insert($query);
                 $writeConcern = new WriteConcern(WriteConcern::MAJORITY, 1000);
-                $this->db->getDatabase()->execute(CURRENT_MONGO_TABLE, $this->bulk, $writeConcern);
+                $this->connection->executeBulkWrite(CURRENT_MONGO_TABLE, $this->bulk, $writeConcern);
 
                 echo 'NEW EMPLOYEE CREATED SUCCESSFULLY!';
             } else {
@@ -65,5 +66,4 @@ class EmployeeServiceMongodb implements IEmployeeService
     {
         // TODO: Implement updateEmployee() method.
     }
-
 }

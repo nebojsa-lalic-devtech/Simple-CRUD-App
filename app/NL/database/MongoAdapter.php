@@ -20,13 +20,13 @@ class MongoAdapter implements IAdapter
         }
     }
 
-    /**
-     * @param $query
-     * @param $bulk
-     * @param $concern
-     */
-    public function execute($query, $bulk, $concern)
-    {
-        self::createConnection()->executeBulkWrite($query, $bulk, $concern);
-    }
+//    /**
+//     * @param $query
+//     * @param $bulk
+//     * @param $concern
+//     */
+//    public function execute($query, $bulk, $concern)
+//    {
+//        self::createConnection()->executeBulkWrite($query, $bulk, $concern);
+//    }
 }

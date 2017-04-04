@@ -6,16 +6,16 @@ use app\NL\database\Database;
 
 class Validation
 {
-    private $db;
+    private $connection;
 
     /**
      * Validation constructor.
      */
     public function __construct()
     {
-        $this->db = new Database();
+        $db = new Database();
+        $this->connection = $db->getDatabase()->createConnection();
     }
-
 
     /**
      * @param $id
@@ -24,16 +24,13 @@ class Validation
      */
     public function validateId($id)
     {
-        $statement = $this->db->getDatabase()->createConnection()->prepare("SELECT id FROM `simple-crud-app`.`employee`");
+        $statement = $this->connection->prepare("SELECT id FROM employee WHERE id = $id");
         $statement->execute();
-        $idsArray = array();
-        while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {
-            $idsArray[] = $row;
-        }
-        if (in_array($id, $idsArray)) {
+        $exists = $statement->fetch();
+        if ($exists == true) {
             return true;
         } else {
-            throw new \UnexpectedValueException("***** ID: '$id'', DOES NOT EXCIST IN DATABASE *****");
+            throw new \UnexpectedValueException("***** ID: '$id', DOES NOT EXISTS IN DATABASE *****");
         }
     }
 }
