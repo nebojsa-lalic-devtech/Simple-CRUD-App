@@ -45,7 +45,7 @@ class EmployeeService implements IEmployeeService
      */
     public function deleteEmployee($id)
     {
-        //$this->validation->validateId($id);
+        $this->validation->validateId($id);
         try {
             $statement = $this->db->getDatabase()->createConnection()->prepare("DELETE FROM employee WHERE id = :id");
             $statement->execute(array(
@@ -66,7 +66,7 @@ class EmployeeService implements IEmployeeService
     {
         $this->validation->validateId($id);
         try {
-            $statement = $this->db->getDatabase()->createConnection()->prepare("SELECT * FROM employee WHERE id=:id LIMIT 1");
+            $statement = $this->db->getDatabase()->createConnection()->prepare("SELECT * FROM employee WHERE id = :id LIMIT 1");
             $statement->execute(array(
                 'id' => $id
             ));
@@ -111,7 +111,7 @@ class EmployeeService implements IEmployeeService
     public function updateEmployee()
     {
         $id = $_POST['id'];
-        //$this->validation->validateId($id);
+        $this->validation->validateId($id);
         try {
             if (isset($_POST['Update']) && $_POST['first_name'] != '' && $_POST['last_name'] != '') {
                 $statement = $this->db->getDatabase()->createConnection()->prepare("UPDATE `simple-crud-app`.`employee` SET `first_name`=:first_name, `last_name`=:last_name, `email`=:email, `job`=:job WHERE `id`=:id");
