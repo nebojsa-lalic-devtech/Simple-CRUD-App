@@ -20,7 +20,7 @@ class Database
                 return $connection;
                 break;
             default:
-                throw new \Exception('***** BASE YOU SPECIFY DO NOT EXCIST *****');
+                throw new \Exception('***** BASE YOU SPECIFY DO NOT EXIST *****');
                 break;
         }
     }

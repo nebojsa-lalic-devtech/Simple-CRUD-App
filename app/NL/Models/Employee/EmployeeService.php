@@ -12,11 +12,13 @@ class EmployeeService implements IEmployeeService
 
     /**
      * EmployeeService constructor.
+     * @param Validation $val
+     * @param Database $db
      */
-    public function __construct()
+    public function __construct(Validation $val, Database $db)
     {
-        $this->validation = new Validation();
-        $this->db = new Database();
+        $this->validation = $val;
+        $this->db = $db;
     }
 
     /**

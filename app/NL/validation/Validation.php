@@ -10,10 +10,11 @@ class Validation
 
     /**
      * Validation constructor.
+     * @param Database $db
      */
-    public function __construct()
+    public function __construct(Database $db)
     {
-        $this->db = new Database();
+        $this->db = $db;
     }
 
     /**
