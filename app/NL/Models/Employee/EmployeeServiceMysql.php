@@ -3,7 +3,7 @@
 namespace app\NL\Models\Employee;
 
 use app\NL\database\Database;
-use app\NL\validation\Validation;
+use app\NL\validation\ValidationMysql;
 
 class EmployeeServiceMysql implements IEmployeeService
 {
@@ -15,7 +15,7 @@ class EmployeeServiceMysql implements IEmployeeService
      */
     public function __construct()
     {
-        $this->validation = new Validation();
+        $this->validation = new ValidationMysql();
         $db = new Database();
         $this->connection = $db->getDatabase()->createConnection();
     }

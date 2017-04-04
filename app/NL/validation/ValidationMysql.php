@@ -4,7 +4,7 @@ namespace app\NL\validation;
 
 use app\NL\database\Database;
 
-class Validation
+class ValidationMysql
 {
     private $connection;
 
