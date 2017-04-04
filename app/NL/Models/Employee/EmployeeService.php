@@ -39,6 +39,10 @@ class EmployeeService implements IEmployeeService
         return $rows;
     }
 
+    /**
+     * @param $id
+     * @throws \Exception
+     */
     public function deleteEmployee($id)
     {
         //$this->validation->validateId($id);
@@ -53,6 +57,11 @@ class EmployeeService implements IEmployeeService
         }
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     * @throws \Exception
+     */
     public function getOneEmployee($id)
     {
         $this->validation->validateId($id);
@@ -69,10 +78,13 @@ class EmployeeService implements IEmployeeService
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     public function createEmployee()
     {
         try {
-            if (isset($_POST['Submit'])) {
+            if (isset($_POST['Submit']) && $_POST['first_name'] != '' && $_POST['last_name'] != '') {
                 $connection = $this->db->getDatabase()->createConnection();
                 $statement = $connection->prepare("INSERT INTO `simple-crud-app`.`employee` (`id`, `first_name`, `last_name`, `email`, `job`) VALUES (:id, :first_name, :last_name, :email, :job)");
                 $id = $connection->lastInsertId();
@@ -85,18 +97,23 @@ class EmployeeService implements IEmployeeService
                 ));
 
                 echo 'NEW EMPLOYEE CREATED SUCCESSFULLY!';
+            } else {
+                echo '***** FIELDS "FIRST NAME" & "LAST NAME" MUST BE FILLED *****';
             }
         } catch (\PDOException $ex) {
             echo '***** CAN\'T CREATE EMPLOYEE! *****' . $ex->getMessage();
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     public function updateEmployee()
     {
         $id = $_POST['id'];
-        $this->validation->validateId($id);
+        //$this->validation->validateId($id);
         try {
-            if (isset($_POST['Update'])) {
+            if (isset($_POST['Update']) && $_POST['first_name'] != '' && $_POST['last_name'] != '') {
                 $statement = $this->db->getDatabase()->createConnection()->prepare("UPDATE `simple-crud-app`.`employee` SET `first_name`=:first_name, `last_name`=:last_name, `email`=:email, `job`=:job WHERE `id`=:id");
                 $statement->execute(array(
                     'id' => $id,
@@ -107,6 +124,8 @@ class EmployeeService implements IEmployeeService
                 ));
 
                 echo 'EMPLOYEE WITH ID: ' . $_POST['id'] . ' UPDATED SUCCESSFULLY!';
+            } else {
+                echo '***** FIELDS "FIRST NAME" & "LAST NAME" MUST BE FILLED *****';
             }
         } catch (\PDOException $ex) {
             echo '***** CAN\'T UPDATE EMPLOYEE WITH ID: ' . $_POST['id'] . ' *****' . $ex->getMessage();

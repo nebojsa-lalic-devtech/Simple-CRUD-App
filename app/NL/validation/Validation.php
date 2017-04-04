@@ -16,7 +16,6 @@ class Validation
         $this->db = new Database();
     }
 
-
     /**
      * @param $id
      * @return bool
@@ -30,10 +29,10 @@ class Validation
         while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {
             $idsArray[] = $row;
         }
-        if (in_array($id, $idsArray)) {
+        if (in_array($id, $idsArray)) {;
             return true;
         } else {
-            throw new \UnexpectedValueException("***** ID: '$id'', DOES NOT EXCIST IN DATABASE *****");
+            throw new \UnexpectedValueException("***** ID: '$id', DOES NOT EXISTS IN DATABASE *****");
         }
     }
 }
