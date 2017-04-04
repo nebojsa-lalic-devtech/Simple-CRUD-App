@@ -4,16 +4,17 @@ namespace app\NL\validation;
 
 use app\NL\database\Database;
 
-class Validation
+class ValidationMysql
 {
-    private $db;
+    private $connection;
 
     /**
      * Validation constructor.
      */
     public function __construct()
     {
-        $this->db = new Database();
+        $db = new Database();
+        $this->connection = $db->getDatabase()->createConnection();
     }
 
     /**
@@ -23,10 +24,9 @@ class Validation
      */
     public function validateId($id)
     {
-        $statement = $this->db->getDatabase()->createConnection()->prepare("SELECT id FROM employee WHERE id = $id");
+        $statement = $this->connection->prepare("SELECT id FROM employee WHERE id = $id");
         $statement->execute();
         $exists = $statement->fetch();
-
         if ($exists == true) {
             return true;
         } else {
