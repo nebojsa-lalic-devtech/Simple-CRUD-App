@@ -3,15 +3,8 @@
 require_once '../vendor/autoload.php';
 require_once '../app/NL/bootstrap/bootstrap.php';
 
-use Klein\Klein;
 use app\NL\Models\Company\Company;
 use app\NL\Models\Project\Project;
-use app\NL\database\Database;
-//use MongoDB\Driver\BulkWrite;
-
-$klein = new Klein();
-$smarty = new Smarty();
-$database = new Database();
 
 //***************************** CRUD START ****************************
 //GET ALL Employees
