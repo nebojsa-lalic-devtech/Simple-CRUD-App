@@ -106,15 +106,9 @@ class EmployeeServiceMongodb implements IEmployeeService
     {
         $id = $_POST['id'];
         $employeeFromDb = $this->validation->validateId($id);
-        $employeeToArray = (array)$employeeFromDb[0];
+        $oldEmployee = (array)$employeeFromDb[0];
         try {
             if (isset($_POST['Update'])) {
-                $oldEmployee = [
-                    'first_name' => $employeeToArray['first_name'],
-                    'last_name' => $employeeToArray['last_name'],
-                    'email' => $employeeToArray['email'] ? $employeeToArray['email'] : null,
-                    'job' => $employeeToArray['job'] ? $employeeToArray['job'] : null
-                ];
                 $newEmployee = [
                     'first_name' => $_POST['first_name'] ? $_POST['first_name'] : $employeeToArray['first_name'],
                     'last_name' => $_POST['last_name'] ? $_POST['last_name'] : $employeeToArray['last_name'],
