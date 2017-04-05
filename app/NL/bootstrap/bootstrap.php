@@ -29,13 +29,17 @@ $employeeServiceMongodb = new EmployeeServiceMongodb($bulk, $validationMongodb, 
 switch (CURRENT_DB) {
     case 'mysql':
         $employeeService = $employeeServiceMysql;
-        $smarty->assign('employeeArray', $employeeService->getAllEmployees());
-        return $getAllEmployees = $smarty->display('templates/indexMysql.tpl');
+        $getAllEmployeesView = 'templates/indexMysql.tpl';
+        $getOneEmployeeView = 'templates/employeeByIdMysql.tpl';
+        $createEmployeeView = 'templates/createdEmployee.tpl';
+        $updateEmployeeView = 'templates/updatedEmployee.tpl';
         break;
     case 'mongodb':
         $employeeService = $employeeServiceMongodb;
-        $smarty->assign('employeeArray', $employeeService->getAllEmployees());
-        return $getAllEmployees = $smarty->display('templates/indexMongo.tpl');
+        $getAllEmployeesView = 'templates/indexMongodb.tpl';
+        $getOneEmployeeView = 'templates/employeeByIdMongodb.tpl';
+        $createEmployeeView = 'templates/createdEmployee.tpl';
+        $updateEmployeeView = 'templates/updatedEmployee.tpl';
         break;
     default:
         break;

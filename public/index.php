@@ -8,28 +8,28 @@ use app\NL\Models\Project\Project;
 
 //***************************** CRUD START ****************************
 //GET ALL Employees
-$klein->respond('GET', '/', function () use ($getAllEmployees) {
-    return $getAllEmployees;
+$klein->respond('GET', '/', function () use ($employeeService, $smarty, $getAllEmployeesView) {
+    $smarty->assign('employeeArray', $employeeService->getAllEmployees());
+    return $smarty->display($getAllEmployeesView);
 });
 
 //GET ONE Employee
-$klein->respond('GET', '/[:id]', function ($request) use ($employeeService, $smarty) {
+$klein->respond('GET', '/[:id]', function ($request) use ($employeeService, $smarty, $getOneEmployeeView) {
     $employee = $employeeService->getOneEmployee($request->id);
-    $smarty->assign('employeeId', $request->id);
     $smarty->assign('employee', $employee);
-    return $smarty->display('templates/employeeById.tpl');
+    return $smarty->display($getOneEmployeeView);
 });
 
 //CREATE Employee
-$klein->respond('POST', '/employee/create', function () use ($employeeService, $smarty) {
+$klein->respond('POST', '/employee/create', function () use ($employeeService, $smarty, $createEmployeeView) {
     $employeeService->createEmployee();
-    return $smarty->display('templates/createdEmployee.tpl');
+    return $smarty->display($createEmployeeView);
 });
 
 //UPDATE Employee
-$klein->respond('POST', '/employee/update', function () use ($employeeService, $smarty) {
+$klein->respond('POST', '/employee/update', function () use ($employeeService, $smarty, $updateEmployeeView) {
     $employeeService->updateEmployee();
-    return $smarty->display('templates/updatedEmployee.tpl');
+    return $smarty->display($updateEmployeeView);
 });
 
 //DELETE Employee

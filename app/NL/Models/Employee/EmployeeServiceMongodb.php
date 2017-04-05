@@ -61,7 +61,8 @@ class EmployeeServiceMongodb implements IEmployeeService
 
     public function getOneEmployee($id)
     {
-        // TODO: Implement getOneEmployee() method.
+        $employee = $this->validation->validateId($id);
+        return $employee;
     }
 
     /**

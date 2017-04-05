@@ -35,7 +35,7 @@ class ValidationMongodb
             $result[] = $key;
         }
         if ($result == true) {
-            return true;
+            return $result;
         } else {
             throw new \UnexpectedValueException("***** ID: '$id', DOES NOT EXISTS IN DATABASE *****");
         }

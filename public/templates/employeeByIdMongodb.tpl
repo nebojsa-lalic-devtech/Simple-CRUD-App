@@ -8,11 +8,12 @@
 <p>------------------------------------------------------------</p>
 <div>
     <ul>
-        <li><p><b>Id: </b>{$employeeId}</p></li>
-        <li><p><b>Name: </b>{$employee.first_name} {$employee.last_name}</p></li>
-        <li><p><b>Email: </b>{$employee.email}</p></li>
-        <li><p><b>Job: </b>{$employee.job}</p></li>
-        <br>
+        {foreach from=$employee key=key item=i}
+            <li><p><b>Id: </b>{$i->_id}</p></li>
+            <li><p><b>Name: </b>{$i->first_name} {$i->last_name}</p></li>
+            <li><p><b>Email: </b>{$i->email}</p></li>
+            <li><p><b>Job: </b>{$i->job}</p></li><br>
+        {/foreach}
     </ul>
 </div>
 <p>------------------------------------------------------------</p>
