@@ -3,13 +3,15 @@
 namespace app\NL\validation;
 
 use app\NL\database\Database;
+use MongoDB\BSON\ObjectID;
+use MongoDB\Driver\Query;
 
-class Validation
+class ValidationMongodb
 {
     private $db;
 
     /**
-     * Validation constructor.
+     * ValidationMongodb constructor.
      * @param Database $db
      */
     public function __construct(Database $db)
@@ -24,11 +26,15 @@ class Validation
      */
     public function validateId($id)
     {
-        $statement = $this->db->getDatabase()->createConnection()->prepare("SELECT id FROM employee WHERE id = $id");
-        $statement->execute();
-        $exists = $statement->fetch();
-
-        if ($exists == true) {
+        $objectId = new ObjectID((string)$id);
+        $filter = ['_id' => $objectId];
+        $query = new Query($filter, []);
+        $keys = $this->db->getDatabase()->createConnection()->executeQuery(CURRENT_MONGO_TABLE, $query);
+        $result = array();
+        foreach ($keys as $key) {
+            $result[] = $key;
+        }
+        if ($result == true) {
             return true;
         } else {
             throw new \UnexpectedValueException("***** ID: '$id', DOES NOT EXISTS IN DATABASE *****");
