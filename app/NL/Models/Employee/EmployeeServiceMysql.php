@@ -31,7 +31,7 @@ class EmployeeServiceMysql implements IEmployeeService
         $statement = $this->db->getDatabase()->createConnection()->prepare("SELECT * FROM `simple-crud-app`.employee");
         $statement->execute();
 
-        if (!$statement->rowCount() > 0) {
+        if (!($statement->rowCount() > 0)) {
             throw new \Exception("***** CAN'T GET TABLE CONTENT! EMPTY TABLE! *****");
         }
 

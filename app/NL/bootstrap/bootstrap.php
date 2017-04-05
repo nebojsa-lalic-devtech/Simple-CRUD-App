@@ -29,9 +29,13 @@ $employeeServiceMongodb = new EmployeeServiceMongodb($bulk, $validationMongodb, 
 switch (CURRENT_DB) {
     case 'mysql':
         $employeeService = $employeeServiceMysql;
+        $smarty->assign('employeeArray', $employeeService->getAllEmployees());
+        return $getAllEmployees = $smarty->display('templates/indexMysql.tpl');
         break;
     case 'mongodb':
         $employeeService = $employeeServiceMongodb;
+        $smarty->assign('employeeArray', $employeeService->getAllEmployees());
+        return $getAllEmployees = $smarty->display('templates/indexMongo.tpl');
         break;
     default:
         break;

@@ -8,9 +8,8 @@ use app\NL\Models\Project\Project;
 
 //***************************** CRUD START ****************************
 //GET ALL Employees
-$klein->respond('GET', '/', function () use ($employeeService, $smarty) {
-    $smarty->assign('employeeArray', $employeeService->getAllEmployees());
-    return $smarty->display('templates/index.tpl');
+$klein->respond('GET', '/', function () use ($getAllEmployees) {
+    return $getAllEmployees;
 });
 
 //GET ONE Employee

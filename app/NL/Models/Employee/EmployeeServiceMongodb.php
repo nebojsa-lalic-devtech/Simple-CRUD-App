@@ -6,6 +6,7 @@ use app\NL\database\Database;
 use app\NL\validation\ValidationMongodb;
 use MongoDB\BSON\ObjectID;
 use MongoDB\Driver\BulkWrite;
+use MongoDB\Driver\Query;
 use MongoDB\Driver\WriteConcern;
 
 class EmployeeServiceMongodb implements IEmployeeService
@@ -29,7 +30,18 @@ class EmployeeServiceMongodb implements IEmployeeService
 
     public function getAllEmployees()
     {
-        // TODO: Implement getAllEmployees() method.
+        $query = new Query([]);
+        $allEmployees = $this->db->getDatabase()->createConnection()->executeQuery(CURRENT_MONGO_TABLE, $query);
+        $employeesArray = array();
+        foreach ($allEmployees as $employee) {
+            $employeesArray[] = $employee;
+        }
+
+        if (!(sizeof($employeesArray) > 0)) {
+            throw new \Exception("***** CAN'T GET TABLE CONTENT! EMPTY TABLE! *****");
+        }
+
+        return $employeesArray;
     }
 
     /**
