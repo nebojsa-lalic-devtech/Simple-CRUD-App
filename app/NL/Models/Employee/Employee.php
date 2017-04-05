@@ -8,21 +8,7 @@ class Employee extends Person implements IEmployee
 {
     private $email;
     private $job;
-
-    /**
-     * Employee constructor.
-     * @param $first_name
-     * @param $last_name
-     * @param $email
-     * @param $job
-     */
-    public function __construct($first_name, $last_name, $email, $job)
-    {
-        parent::__construct($first_name, $last_name);
-        $this->email = $email;
-        $this->job = $job;
-    }
-
+    
     /**
      * @return string
      */

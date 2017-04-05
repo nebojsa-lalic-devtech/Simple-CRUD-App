@@ -6,7 +6,6 @@ use PDO;
 
 class MysqlAdapter implements IAdapter
 {
-
     /**
      * @return PDO
      */
@@ -21,7 +20,7 @@ class MysqlAdapter implements IAdapter
             echo "***** CONNECTION TO MYSQL DATABASE FAILED! *****" . $ex->getMessage();
         }
     }
-
+  
     /**
      * @param $query
      */
@@ -29,6 +28,4 @@ class MysqlAdapter implements IAdapter
     {
         self::createConnection()->query($query);
     }
-
-
 }

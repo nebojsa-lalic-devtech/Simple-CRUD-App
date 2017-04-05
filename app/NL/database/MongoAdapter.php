@@ -7,7 +7,6 @@ use MongoDB\Driver\Manager;
 
 class MongoAdapter implements IAdapter
 {
-
     /**
      * @return Manager
      */
@@ -20,7 +19,7 @@ class MongoAdapter implements IAdapter
             echo 'Connection to MongoDB base failed: ' . $ex->getMessage();
         }
     }
-
+      
     /**
      * @param $query
      */
