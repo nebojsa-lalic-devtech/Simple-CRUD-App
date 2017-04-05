@@ -70,6 +70,7 @@ class EmployeeServiceMongodb implements IEmployeeService
     public function getOneEmployee($id)
     {
         $employee = $this->validation->validateId($id);
+        var_dump($employee[]->first_name);
         return $employee;
     }
 
@@ -87,9 +88,7 @@ class EmployeeServiceMongodb implements IEmployeeService
                     'job' => $_POST['job'] ? $_POST['job'] : null
                 ];
                 $this->bulk->insert($query);
-                $writeConcern = new WriteConcern(WriteConcern::MAJORITY, 1000);
-                $this->db->getDatabase()->createConnection()->executeBulkWrite(CURRENT_MONGO_TABLE, $this->bulk, $writeConcern);
-
+                self::execute();
                 echo 'NEW EMPLOYEE CREATED SUCCESSFULLY!';
             } else {
                 echo '***** FIELDS "FIRST NAME" & "LAST NAME" MUST BE FILLED *****';
@@ -99,12 +98,36 @@ class EmployeeServiceMongodb implements IEmployeeService
         }
     }
 
+
     /**
-     *
+     * @throws \Exception
      */
     public function updateEmployee()
     {
-        // TODO: Implement updateEmployee() method.
+        $id = $_POST['id'];
+        $employeeFromDb = $this->validation->validateId($id);
+        $employeeToArray = (array)$employeeFromDb[0];
+        try {
+            if (isset($_POST['Update'])) {
+                $oldEmployee = [
+                    'first_name' => $employeeToArray['first_name'],
+                    'last_name' => $employeeToArray['last_name'],
+                    'email' => $employeeToArray['email'] ? $employeeToArray['email'] : null,
+                    'job' => $employeeToArray['job'] ? $employeeToArray['job'] : null
+                ];
+                $newEmployee = [
+                    'first_name' => $_POST['first_name'] ? $_POST['first_name'] : $employeeToArray['first_name'],
+                    'last_name' => $_POST['last_name'] ? $_POST['last_name'] : $employeeToArray['last_name'],
+                    'email' => $_POST['email'] ? $_POST['email'] : $employeeToArray['email'],
+                    'job' => $_POST['job'] ? $_POST['job'] : $employeeToArray['job']
+                ];
+                $this->bulk->update($oldEmployee, $newEmployee);
+                self::execute();
+                echo 'EMPLOYEE WITH ID: ' . $id . ' UPDATED SUCCESSFULLY!';
+            }
+        } catch (\MongoException $ex) {
+            echo '***** CAN\'T UPDATE EMPLOYEE WITH OBJECT ID: ' . $id . ' *****' . $ex->getMessage();
+        }
     }
 
     /**

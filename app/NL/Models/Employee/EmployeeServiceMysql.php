@@ -114,7 +114,7 @@ class EmployeeServiceMysql implements IEmployeeService
         $id = $_POST['id'];
         $this->validation->validateId($id);
         try {
-            if (isset($_POST['Update']) && $_POST['first_name'] != '' && $_POST['last_name'] != '') {
+            if (isset($_POST['Update'])) {
                 $statement = $this->db->getDatabase()->createConnection()->prepare("UPDATE `simple-crud-app`.`employee` SET `first_name`=:first_name, `last_name`=:last_name, `email`=:email, `job`=:job WHERE `id`=:id");
                 $statement->execute(array(
                     'id' => $id,
@@ -124,12 +124,10 @@ class EmployeeServiceMysql implements IEmployeeService
                     'job' => $_POST['job']
                 ));
 
-                echo 'EMPLOYEE WITH ID: ' . $_POST['id'] . ' UPDATED SUCCESSFULLY!';
-            } else {
-                echo '***** FIELDS "FIRST NAME" & "LAST NAME" MUST BE FILLED *****';
+                echo 'EMPLOYEE WITH ID: ' . $id . ' UPDATED SUCCESSFULLY!';
             }
         } catch (\PDOException $ex) {
-            echo '***** CAN\'T UPDATE EMPLOYEE WITH ID: ' . $_POST['id'] . ' *****' . $ex->getMessage();
+            echo '***** CAN\'T UPDATE EMPLOYEE WITH ID: ' . $id . ' *****' . $ex->getMessage();
         }
     }
 }
