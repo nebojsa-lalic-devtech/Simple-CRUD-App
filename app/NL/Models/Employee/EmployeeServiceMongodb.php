@@ -28,6 +28,10 @@ class EmployeeServiceMongodb implements IEmployeeService
         $this->db = $db;
     }
 
+    /**
+     * @return array
+     * @throws \Exception
+     */
     public function getAllEmployees()
     {
         $query = new Query([]);
@@ -59,6 +63,10 @@ class EmployeeServiceMongodb implements IEmployeeService
         }
     }
 
+    /**
+     * @param $id
+     * @return bool
+     */
     public function getOneEmployee($id)
     {
         $employee = $this->validation->validateId($id);
@@ -91,6 +99,9 @@ class EmployeeServiceMongodb implements IEmployeeService
         }
     }
 
+    /**
+     *
+     */
     public function updateEmployee()
     {
         // TODO: Implement updateEmployee() method.
