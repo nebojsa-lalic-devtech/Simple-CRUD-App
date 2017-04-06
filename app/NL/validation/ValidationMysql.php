@@ -6,15 +6,15 @@ use app\NL\database\Database;
 
 class ValidationMysql
 {
-    private $connection;
+    private $db;
 
     /**
-     * Validation constructor.
+     * ValidationMysql constructor.
+     * @param Database $db
      */
-    public function __construct()
+    public function __construct(Database $db)
     {
-        $db = new Database();
-        $this->connection = $db->getDatabase()->createConnection();
+        $this->db = $db;
     }
 
     /**
@@ -24,7 +24,7 @@ class ValidationMysql
      */
     public function validateId($id)
     {
-        $statement = $this->connection->prepare("SELECT id FROM employee WHERE id = $id");
+        $statement = $this->db->getDatabase()->createConnection()->prepare("SELECT id FROM employee WHERE id = $id");
         $statement->execute();
         $exists = $statement->fetch();
         if ($exists == true) {

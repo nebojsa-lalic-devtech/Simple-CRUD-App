@@ -12,18 +12,20 @@ use MongoDB\Driver\WriteConcern;
 class EmployeeServiceMongodb implements IEmployeeService
 {
     private $bulk;
-    private $connection;
     private $validation;
+    private $db;
 
     /**
      * EmployeeServiceMongodb constructor.
+     * @param BulkWrite $bulk
+     * @param ValidationMongodb $val
+     * @param Database $db
      */
-    public function __construct()
+    public function __construct(BulkWrite $bulk, ValidationMongodb $val, Database $db)
     {
-        $this->bulk = new BulkWrite();
-        $db = new Database();
-        $this->connection = $db->getDatabase()->createConnection();
-        $this->validation = new ValidationMongodb();
+        $this->bulk = $bulk;
+        $this->validation = $val;
+        $this->db = $db;
     }
 
     public function getAllEmployees()
@@ -82,11 +84,11 @@ class EmployeeServiceMongodb implements IEmployeeService
     }
 
     /**
-     *ExecuteBulkWrite command $ WriteConcern initialisation
+     * @throws \Exception
      */
     private function execute()
     {
         $writeConcern = new WriteConcern(WriteConcern::MAJORITY, 1000);
-        $this->connection->executeBulkWrite(CURRENT_MONGO_TABLE, $this->bulk, $writeConcern);
+        $this->db->getDatabase()->createConnection()->executeBulkWrite(CURRENT_MONGO_TABLE, $this->bulk, $writeConcern);
     }
 }
