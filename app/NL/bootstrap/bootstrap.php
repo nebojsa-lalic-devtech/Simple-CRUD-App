@@ -13,8 +13,6 @@ use app\NL\validation\ValidationMongodb;
 use app\NL\Models\Employee\EmployeeServiceMysql;
 use app\NL\Models\Employee\EmployeeServiceMongodb;
 
-require_once __DIR__ . '\..\database\config.php';
-
 $klein = new Klein();
 $smarty = new Smarty();
 $mysqlAdapter = new MysqlAdapter();
