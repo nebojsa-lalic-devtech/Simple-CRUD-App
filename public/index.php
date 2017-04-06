@@ -1,6 +1,7 @@
 <?php
 
 require_once '../vendor/autoload.php';
+require_once '../app/NL/database/config.php';
 require_once '../app/NL/bootstrap/bootstrap.php';
 
 use app\NL\Models\Company\Company;
@@ -44,7 +45,7 @@ $klein->respond('GET', '/employee/create', function () use ($smarty) {
     return $smarty->display('templates/createEmployee.tpl');
 });
 
-//page with form for update excisting Employee
+//page with form for update existing Employee
 $klein->respond('GET', '/employee/update', function () use ($smarty) {
     return $smarty->display('templates/updateEmployee.tpl');
 });
