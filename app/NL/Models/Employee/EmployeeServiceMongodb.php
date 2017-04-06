@@ -97,8 +97,7 @@ class EmployeeServiceMongodb implements IEmployeeService
             echo '***** CAN\'T CREATE EMPLOYEE! *****' . $ex->getMessage();
         }
     }
-
-
+    
     /**
      * @throws \Exception
      */
@@ -110,10 +109,10 @@ class EmployeeServiceMongodb implements IEmployeeService
         try {
             if (isset($_POST['Update'])) {
                 $newEmployee = [
-                    'first_name' => $_POST['first_name'] ? $_POST['first_name'] : $employeeToArray['first_name'],
-                    'last_name' => $_POST['last_name'] ? $_POST['last_name'] : $employeeToArray['last_name'],
-                    'email' => $_POST['email'] ? $_POST['email'] : $employeeToArray['email'],
-                    'job' => $_POST['job'] ? $_POST['job'] : $employeeToArray['job']
+                    'first_name' => $_POST['first_name'] ? $_POST['first_name'] : $oldEmployee['first_name'],
+                    'last_name' => $_POST['last_name'] ? $_POST['last_name'] : $oldEmployee['last_name'],
+                    'email' => $_POST['email'] ? $_POST['email'] : $oldEmployee['email'],
+                    'job' => $_POST['job'] ? $_POST['job'] : $oldEmployee['job']
                 ];
                 $this->bulk->update($oldEmployee, $newEmployee);
                 self::execute();
