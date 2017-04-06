@@ -68,7 +68,7 @@ class EmployeeServiceMysql implements IEmployeeService
     {
         $this->validation->validateId($id);
         try {
-            $statement = $this->db->getDatabase()->createConnection()->prepare("SELECT * FROM employee WHERE id=:id LIMIT 1");
+            $statement = $this->db->getDatabase()->createConnection()->prepare("SELECT * FROM employee WHERE id = :id LIMIT 1");
             $statement->execute(array(
                 'id' => $id
             ));

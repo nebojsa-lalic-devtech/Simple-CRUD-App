@@ -2,6 +2,8 @@
 
 namespace app\NL\bootstrap;
 
+use app\NL\database\MongoAdapter;
+use app\NL\database\MysqlAdapter;
 use Klein\Klein;
 use MongoDB\Driver\BulkWrite;
 use Smarty;
@@ -15,7 +17,9 @@ require_once __DIR__ . '\..\database\config.php';
 
 $klein = new Klein();
 $smarty = new Smarty();
-$database = new Database();
+$mysqlAdapter = new MysqlAdapter();
+$mongodbAdapter = new MongoAdapter();
+$database = new Database($mysqlAdapter, $mongodbAdapter);
 $validationMysql = new ValidationMysql($database);
 $validationMongodb = new ValidationMongodb($database);
 $employeeServiceMysql = new EmployeeServiceMysql($validationMysql, $database);
@@ -32,4 +36,3 @@ switch (CURRENT_DB) {
     default:
         break;
 }
-
