@@ -8,27 +8,28 @@ use MongoDB\Driver\Query;
 
 class ValidationMongodb
 {
-    private $connection;
+    private $db;
 
     /**
      * ValidationMongodb constructor.
+     * @param Database $db
      */
-    public function __construct()
+    public function __construct(Database $db)
     {
-        $db = new Database();
-        $this->connection = $db->getDatabase()->createConnection();
+        $this->db = $db;
     }
 
     /**
      * @param $id
      * @return bool
+     * @throws \Exception
      */
     public function validateId($id)
     {
         $objectId = new ObjectID((string)$id);
         $filter = ['_id' => $objectId];
         $query = new Query($filter, []);
-        $keys = $this->connection->executeQuery(CURRENT_MONGO_TABLE, $query);
+        $keys = $this->db->getDatabase()->createConnection()->executeQuery(CURRENT_MONGO_TABLE, $query);
         $result = array();
         foreach ($keys as $key) {
             $result[] = $key;
