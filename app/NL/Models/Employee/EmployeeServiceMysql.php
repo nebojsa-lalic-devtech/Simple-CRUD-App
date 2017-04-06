@@ -4,21 +4,25 @@ namespace app\NL\Models\Employee;
 
 use app\NL\database\Database;
 use app\NL\validation\ValidationMysql;
+use Monolog\Logger;
 
 class EmployeeServiceMysql implements IEmployeeService
 {
     private $validation;
     private $db;
+    private $logger;
 
     /**
      * EmployeeServiceMysql constructor.
      * @param ValidationMysql $val
      * @param Database $db
+     * @param Logger $log
      */
-    public function __construct(ValidationMysql $val, Database $db)
+    public function __construct(ValidationMysql $val, Database $db, Logger $log)
     {
         $this->validation = $val;
         $this->db = $db;
+        $this->logger = $log;
     }
 
     /**
@@ -32,12 +36,14 @@ class EmployeeServiceMysql implements IEmployeeService
         $statement->execute();
 
         if (!($statement->rowCount() > 0)) {
+            $this->logger->error("***** CAN'T GET TABLE CONTENT! EMPTY TABLE! *****");
             throw new \Exception("***** CAN'T GET TABLE CONTENT! EMPTY TABLE! *****");
         }
 
         while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {
             $rows[] = $row;
         }
+        $this->logger->info('** Get list of ALL EMPLOYEES from MySQL database **');
         return $rows;
     }
 
@@ -54,8 +60,10 @@ class EmployeeServiceMysql implements IEmployeeService
                 'id' => $id
             ));
             echo 'ITEM WITH ID: ' . $id . ' SUCCESSFULLY DELETED FROM DATABASE!';
+            $this->logger->info("** EMPLOYEE with id:{$id} successfully DELETED from Mongo DB database**");
         } catch (\PDOException $ex) {
             echo '***** CAN\'T DELETE EMPLOYEE WITH ID: ' . $id . ' *****' . $ex->getMessage();
+            $this->logger->error("***** CAN'T DELETE EMPLOYEE WITH ID:{$id} *****");
         }
     }
 
@@ -73,10 +81,11 @@ class EmployeeServiceMysql implements IEmployeeService
                 'id' => $id
             ));
             $oneEmployee = $statement->fetch(\PDO::FETCH_ASSOC);
-
+            $this->logger->info("** Get one EMPLOYEE from MongoDB database with id:{$id} **");
             return $oneEmployee;
         } catch (\PDOException $ex) {
             echo '***** CAN\'T GET EMPLOYEE WITH ID: ' . $id . ' *****' . $ex->getMessage();
+            $this->logger->error("***** CAN'T GET EMPLOYEE WITH ID:{$id} *****");
         }
     }
 
@@ -96,13 +105,14 @@ class EmployeeServiceMysql implements IEmployeeService
                     'email' => $_POST['email'],
                     'job' => $_POST['job']
                 ));
-
                 echo 'NEW EMPLOYEE CREATED SUCCESSFULLY!';
+                $this->logger->info('** NEW EMPLOYEE successfully created MySQL database **');
             } else {
                 echo '***** FIELDS "FIRST NAME" & "LAST NAME" MUST BE FILLED *****';
             }
         } catch (\PDOException $ex) {
             echo '***** CAN\'T CREATE EMPLOYEE! *****' . $ex->getMessage();
+            $this->logger->error("***** CAN'T CREATE EMPLOYEE! *****");
         }
     }
 
@@ -123,11 +133,12 @@ class EmployeeServiceMysql implements IEmployeeService
                     'email' => $_POST['email'],
                     'job' => $_POST['job']
                 ));
-
                 echo 'EMPLOYEE WITH ID: ' . $id . ' UPDATED SUCCESSFULLY!';
+                $this->logger->info("** EMPLOYEE WITH ID:{$id} UPDATED SUCCESSFULLY **");
             }
         } catch (\PDOException $ex) {
             echo '***** CAN\'T UPDATE EMPLOYEE WITH ID: ' . $id . ' *****' . $ex->getMessage();
+            $this->logger->error("***** CAN'T UPDATE EMPLOYEE WITH OBJECT ID: {$id} *****");
         }
     }
 }

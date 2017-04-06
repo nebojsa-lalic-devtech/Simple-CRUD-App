@@ -5,18 +5,22 @@ namespace app\NL\validation;
 use app\NL\database\Database;
 use MongoDB\BSON\ObjectID;
 use MongoDB\Driver\Query;
+use Monolog\Logger;
 
 class ValidationMongodb
 {
     private $db;
+    private $logger;
 
     /**
      * ValidationMongodb constructor.
      * @param Database $db
+     * @param Logger $log
      */
-    public function __construct(Database $db)
+    public function __construct(Database $db, Logger $log)
     {
         $this->db = $db;
+        $this->logger = $log;
     }
 
     /**
@@ -37,6 +41,7 @@ class ValidationMongodb
         if ($result == true) {
             return $result;
         } else {
+            $this->logger->error("***** ID:{$id}, DOES NOT EXISTS IN DATABASE *****");
             throw new \UnexpectedValueException("***** ID: '$id', DOES NOT EXISTS IN DATABASE *****");
         }
     }
