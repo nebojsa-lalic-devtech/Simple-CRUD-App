@@ -13,8 +13,6 @@ use app\NL\validation\ValidationMongodb;
 use app\NL\Models\Employee\EmployeeServiceMysql;
 use app\NL\Models\Employee\EmployeeServiceMongodb;
 
-require_once __DIR__ . '\..\database\config.php';
-
 $klein = new Klein();
 $smarty = new Smarty();
 $mysqlAdapter = new MysqlAdapter();
@@ -27,16 +25,20 @@ $bulk = new BulkWrite();
 $employeeServiceMongodb = new EmployeeServiceMongodb($bulk, $validationMongodb, $database);
 
 switch (CURRENT_DB) {
-    case 'mysql':
-        $employeeService = $employeeServiceMysql;
-        $smarty->assign('employeeArray', $employeeService->getAllEmployees());
-        return $getAllEmployees = $smarty->display('templates/indexMysql.tpl');
-        break;
-    case 'mongodb':
-        $employeeService = $employeeServiceMongodb;
-        $smarty->assign('employeeArray', $employeeService->getAllEmployees());
-        return $getAllEmployees = $smarty->display('templates/indexMongo.tpl');
-        break;
-    default:
-        break;
+        case 'mysql':
+                $employeeService = $employeeServiceMysql;
+                $getAllEmployeesView = 'templates/indexMysql.tpl';
+                $getOneEmployeeView = 'templates/employeeByIdMysql.tpl';
+                $createEmployeeView = 'templates/createdEmployee.tpl';
+                $updateEmployeeView = 'templates/updatedEmployee.tpl';
+                break;
+        case 'mongodb':
+                $employeeService = $employeeServiceMongodb;
+                $getAllEmployeesView = 'templates/indexMongodb.tpl';
+                $getOneEmployeeView = 'templates/employeeByIdMongodb.tpl';
+                $createEmployeeView = 'templates/createdEmployee.tpl';
+                $updateEmployeeView = 'templates/updatedEmployee.tpl';
+                break;
+        default:
+                break;
 }
