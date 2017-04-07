@@ -2,7 +2,8 @@
     "name": "nebojsa/composer-app",
     "require": {
         "klein/klein": "^2.1",
-        "smarty/smarty": "~3.1"
+        "smarty/smarty": "~3.1",
+        "php-di/php-di": "^5.4"
     },
     "autoload": {
       "psr-4": {

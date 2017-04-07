@@ -3,19 +3,19 @@
 namespace app\NL\Models\Employee;
 
 use app\NL\database\Database;
-use app\NL\validation\Validation;
+use app\NL\validation\ValidationMysql;
 
-class EmployeeService implements IEmployeeService
+class EmployeeServiceMysql implements IEmployeeService
 {
     private $validation;
     private $db;
 
     /**
-     * EmployeeService constructor.
-     * @param Validation $val
+     * EmployeeServiceMysql constructor.
+     * @param ValidationMysql $val
      * @param Database $db
      */
-    public function __construct(Validation $val, Database $db)
+    public function __construct(ValidationMysql $val, Database $db)
     {
         $this->validation = $val;
         $this->db = $db;
@@ -87,9 +87,8 @@ class EmployeeService implements IEmployeeService
     {
         try {
             if (isset($_POST['Submit']) && $_POST['first_name'] != '' && $_POST['last_name'] != '') {
-                $connection = $this->db->getDatabase()->createConnection();
-                $statement = $connection->prepare("INSERT INTO `simple-crud-app`.`employee` (`id`, `first_name`, `last_name`, `email`, `job`) VALUES (:id, :first_name, :last_name, :email, :job)");
-                $id = $connection->lastInsertId();
+                $statement = $this->db->getDatabase()->createConnection()->prepare("INSERT INTO `simple-crud-app`.`employee` (`id`, `first_name`, `last_name`, `email`, `job`) VALUES (:id, :first_name, :last_name, :email, :job)");
+                $id = $this->db->getDatabase()->createConnection()->lastInsertId();
                 $statement->execute(array(
                     'id' => $_POST['id'] ? $_POST['id'] : $id,
                     'first_name' => $_POST['first_name'] ? $_POST['first_name'] : null,

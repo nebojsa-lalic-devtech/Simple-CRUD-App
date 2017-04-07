@@ -21,11 +21,11 @@ class MysqlAdapter implements IAdapter
         }
     }
   
-    /**
-     * @param $query
-     */
-    public function execute($query)
-    {
-        self::createConnection()->query($query);
-    }
+//    /**
+//     * @param $query
+//     */
+//    public function execute($query)
+//    {
+//        self::createConnection()->query($query);
+//    }
 }

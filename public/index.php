@@ -1,11 +1,11 @@
 <?php
 
 require_once '../vendor/autoload.php';
+require_once '../app/NL/database/config.php';
 require_once '../app/NL/bootstrap/bootstrap.php';
 
 use app\NL\Models\Company\Company;
 use app\NL\Models\Project\Project;
-use MongoDB\Driver\BulkWrite;
 
 //***************************** CRUD START ****************************
 //GET ALL Employees
@@ -63,14 +63,14 @@ $klein->respond('GET', '/project', function () use ($smarty) {
     return $smarty->display('templates/project.tpl');
 });
 
-//TEMPORARY TEST Mongo Connection
-$klein->respond('POST', '/mongodb', function () use ($database) {
-    $bulk = new BulkWrite();
-    $document1 = ['id' => '123123', 'first_name' => 'Nebojsa', 'last_name' => 'Lalic', 'job' => 'developer'];
-    $bulk->insert($document1);
-    $writeConcern = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 1000);
-    $database->getDatabase()->execute('test.guest', $bulk, $writeConcern);
-});
+////TEMPORARY TEST Mongo Connection
+//$klein->respond('POST', '/mongodb', function () use ($database) {
+//    $bulk = new BulkWrite();
+//    $document1 = ['id' => '123123', 'first_name' => 'Nebojsa', 'last_name' => 'Lalic', 'job' => 'developer'];
+//    $bulk->insert($document1);
+//    $writeConcern = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 1000);
+//    $database->getDatabase()->execute('test.guest', $bulk, $writeConcern);
+//});
 
 //URL Exception
 $klein->onHttpError(function () use ($smarty) {
