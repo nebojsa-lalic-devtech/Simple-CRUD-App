@@ -70,6 +70,7 @@ class EmployeeServiceMongodb implements IEmployeeService
     public function getOneEmployee($id)
     {
         $employee = $this->validation->validateId($id);
+        var_dump($employee[]->first_name);
         return $employee;
     }
 
@@ -87,9 +88,7 @@ class EmployeeServiceMongodb implements IEmployeeService
                     'job' => $_POST['job'] ? $_POST['job'] : null
                 ];
                 $this->bulk->insert($query);
-                $writeConcern = new WriteConcern(WriteConcern::MAJORITY, 1000);
-                $this->db->getDatabase()->createConnection()->executeBulkWrite(CURRENT_MONGO_TABLE, $this->bulk, $writeConcern);
-
+                self::execute();
                 echo 'NEW EMPLOYEE CREATED SUCCESSFULLY!';
             } else {
                 echo '***** FIELDS "FIRST NAME" & "LAST NAME" MUST BE FILLED *****';
@@ -98,13 +97,30 @@ class EmployeeServiceMongodb implements IEmployeeService
             echo '***** CAN\'T CREATE EMPLOYEE! *****' . $ex->getMessage();
         }
     }
-
+    
     /**
-     *
+     * @throws \Exception
      */
     public function updateEmployee()
     {
-        // TODO: Implement updateEmployee() method.
+        $id = $_POST['id'];
+        $employeeFromDb = $this->validation->validateId($id);
+        $oldEmployee = (array)$employeeFromDb[0];
+        try {
+            if (isset($_POST['Update'])) {
+                $newEmployee = [
+                    'first_name' => $_POST['first_name'] ? $_POST['first_name'] : $oldEmployee['first_name'],
+                    'last_name' => $_POST['last_name'] ? $_POST['last_name'] : $oldEmployee['last_name'],
+                    'email' => $_POST['email'] ? $_POST['email'] : $oldEmployee['email'],
+                    'job' => $_POST['job'] ? $_POST['job'] : $oldEmployee['job']
+                ];
+                $this->bulk->update($oldEmployee, $newEmployee);
+                self::execute();
+                echo 'EMPLOYEE WITH ID: ' . $id . ' UPDATED SUCCESSFULLY!';
+            }
+        } catch (\MongoException $ex) {
+            echo '***** CAN\'T UPDATE EMPLOYEE WITH OBJECT ID: ' . $id . ' *****' . $ex->getMessage();
+        }
     }
 
     /**
