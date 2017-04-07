@@ -15,9 +15,9 @@
 <div>
     <ul>
         {foreach from=$employeeArray key=key item=i}
-            {*<li><p><b>Id: </b>{$i->id}</p></li>*}
-            <li><p><b>Name: </b>{$i->getFirstName()} {$i->getLastName()}</p></li>
-            {*<li><p><b>Email: </b>{$i->email}</p></li>*}
+            <li><p><b>Id: </b>{$i->_id}</p></li>
+            <li><p><b>Name: </b>{$i->first_name} {$i->last_name}</p></li>
+            <li><p><b>Email: </b>{$i->email}</p></li>
             <li><p><b>Job: </b>{$i->job}</p></li><br>
         {/foreach}
     </ul>

@@ -25,12 +25,20 @@ $bulk = new BulkWrite();
 $employeeServiceMongodb = new EmployeeServiceMongodb($bulk, $validationMongodb, $database);
 
 switch (CURRENT_DB) {
-    case 'mysql':
-        $employeeService = $employeeServiceMysql;
-        break;
-    case 'mongodb':
-        $employeeService = $employeeServiceMongodb;
-        break;
-    default:
-        break;
+        case 'mysql':
+                $employeeService = $employeeServiceMysql;
+                $getAllEmployeesView = 'templates/indexMysql.tpl';
+                $getOneEmployeeView = 'templates/employeeByIdMysql.tpl';
+                $createEmployeeView = 'templates/createdEmployee.tpl';
+                $updateEmployeeView = 'templates/updatedEmployee.tpl';
+                break;
+        case 'mongodb':
+                $employeeService = $employeeServiceMongodb;
+                $getAllEmployeesView = 'templates/indexMongodb.tpl';
+                $getOneEmployeeView = 'templates/employeeByIdMongodb.tpl';
+                $createEmployeeView = 'templates/createdEmployee.tpl';
+                $updateEmployeeView = 'templates/updatedEmployee.tpl';
+                break;
+        default:
+                break;
 }

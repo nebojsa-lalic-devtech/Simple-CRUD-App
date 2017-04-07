@@ -4,7 +4,9 @@ namespace app\NL\Models\Employee;
 
 use app\NL\database\Database;
 use app\NL\validation\ValidationMongodb;
+use MongoDB\BSON\ObjectID;
 use MongoDB\Driver\BulkWrite;
+use MongoDB\Driver\Query;
 use MongoDB\Driver\WriteConcern;
 
 class EmployeeServiceMongodb implements IEmployeeService
@@ -28,12 +30,33 @@ class EmployeeServiceMongodb implements IEmployeeService
 
     public function getAllEmployees()
     {
-        // TODO: Implement getAllEmployees() method.
+        $query = new Query([]);
+        $allEmployees = $this->db->getDatabase()->createConnection()->executeQuery(CURRENT_MONGO_TABLE, $query);
+        $employeesArray = array();
+        foreach ($allEmployees as $employee) {
+            $employeesArray[] = $employee;
+        }
+
+        if (!(sizeof($employeesArray) > 0)) {
+            throw new \Exception("***** CAN'T GET TABLE CONTENT! EMPTY TABLE! *****");
+        }
+
+        return $employeesArray;
     }
 
+    /**
+     * @param $id
+     */
     public function deleteEmployee($id)
     {
-        // TODO: Implement deleteEmployee() method.
+        $this->validation->validateId($id);
+        try {
+            $this->bulk->delete(["_id" => new ObjectID($id)], ['limit' => 1]);
+            self::execute();
+            echo 'ITEM WITH OBJECT ID: ' . $id . ' SUCCESSFULLY DELETED FROM DATABASE!';
+        } catch (\MongoException $ex) {
+            echo '***** CAN\'T DELETE EMPLOYEE WITH ID: ' . $id . ' *****' . $ex->getMessage();
+        }
     }
 
     public function getOneEmployee($id)
@@ -70,5 +93,14 @@ class EmployeeServiceMongodb implements IEmployeeService
     public function updateEmployee()
     {
         // TODO: Implement updateEmployee() method.
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function execute()
+    {
+        $writeConcern = new WriteConcern(WriteConcern::MAJORITY, 1000);
+        $this->db->getDatabase()->createConnection()->executeBulkWrite(CURRENT_MONGO_TABLE, $this->bulk, $writeConcern);
     }
 }
