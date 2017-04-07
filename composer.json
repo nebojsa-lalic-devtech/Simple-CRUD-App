@@ -3,7 +3,8 @@
     "require": {
         "klein/klein": "^2.1",
         "smarty/smarty": "~3.1",
-        "php-di/php-di": "^5.4"
+        "php-di/php-di": "^5.4",
+        "monolog/monolog": "^1.22"
     },
     "autoload": {
       "psr-4": {

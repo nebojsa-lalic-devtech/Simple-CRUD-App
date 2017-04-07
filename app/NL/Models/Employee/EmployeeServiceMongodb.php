@@ -8,24 +8,28 @@ use MongoDB\BSON\ObjectID;
 use MongoDB\Driver\BulkWrite;
 use MongoDB\Driver\Query;
 use MongoDB\Driver\WriteConcern;
+use Monolog\Logger;
 
 class EmployeeServiceMongodb implements IEmployeeService
 {
     private $bulk;
     private $validation;
     private $db;
+    private $logger;
 
     /**
      * EmployeeServiceMongodb constructor.
      * @param BulkWrite $bulk
      * @param ValidationMongodb $val
      * @param Database $db
+     * @param Logger $log
      */
-    public function __construct(BulkWrite $bulk, ValidationMongodb $val, Database $db)
+    public function __construct(BulkWrite $bulk, ValidationMongodb $val, Database $db, Logger $log)
     {
         $this->bulk = $bulk;
         $this->validation = $val;
         $this->db = $db;
+        $this->logger = $log;
     }
 
     /**
@@ -42,9 +46,10 @@ class EmployeeServiceMongodb implements IEmployeeService
         }
 
         if (!(sizeof($employeesArray) > 0)) {
+            $this->logger->error("***** CAN'T GET TABLE CONTENT! EMPTY TABLE! *****");
             throw new \Exception("***** CAN'T GET TABLE CONTENT! EMPTY TABLE! *****");
         }
-
+        $this->logger->info('** Get list of ALL EMPLOYEES from MongoDB database **');
         return $employeesArray;
     }
 
@@ -58,8 +63,10 @@ class EmployeeServiceMongodb implements IEmployeeService
             $this->bulk->delete(["_id" => new ObjectID($id)], ['limit' => 1]);
             self::execute();
             echo 'ITEM WITH OBJECT ID: ' . $id . ' SUCCESSFULLY DELETED FROM DATABASE!';
+            $this->logger->info("** EMPLOYEE with id:{$id} successfully DELETED from Mongo DB database**");
         } catch (\MongoException $ex) {
             echo '***** CAN\'T DELETE EMPLOYEE WITH ID: ' . $id . ' *****' . $ex->getMessage();
+            $this->logger->error("***** CAN'T DELETE EMPLOYEE WITH ID:{$id} *****");
         }
     }
 
@@ -70,7 +77,7 @@ class EmployeeServiceMongodb implements IEmployeeService
     public function getOneEmployee($id)
     {
         $employee = $this->validation->validateId($id);
-        var_dump($employee[]->first_name);
+        $this->logger->info("** Get one EMPLOYEE from MongoDB database with id:{$id} **");
         return $employee;
     }
 
@@ -90,11 +97,13 @@ class EmployeeServiceMongodb implements IEmployeeService
                 $this->bulk->insert($query);
                 self::execute();
                 echo 'NEW EMPLOYEE CREATED SUCCESSFULLY!';
+                $this->logger->info('** NEW EMPLOYEE successfully created MongoDB database **');
             } else {
                 echo '***** FIELDS "FIRST NAME" & "LAST NAME" MUST BE FILLED *****';
             }
         } catch (\MongoException $ex) {
             echo '***** CAN\'T CREATE EMPLOYEE! *****' . $ex->getMessage();
+            $this->logger->error("***** CAN'T CREATE EMPLOYEE! *****");
         }
     }
     
@@ -117,9 +126,11 @@ class EmployeeServiceMongodb implements IEmployeeService
                 $this->bulk->update($oldEmployee, $newEmployee);
                 self::execute();
                 echo 'EMPLOYEE WITH ID: ' . $id . ' UPDATED SUCCESSFULLY!';
+                $this->logger->info("** EMPLOYEE WITH ID:{$id} UPDATED SUCCESSFULLY **");
             }
         } catch (\MongoException $ex) {
             echo '***** CAN\'T UPDATE EMPLOYEE WITH OBJECT ID: ' . $id . ' *****' . $ex->getMessage();
+            $this->logger->error("***** CAN'T UPDATE EMPLOYEE WITH OBJECT ID: {$id} *****");
         }
     }
 
