@@ -1,7 +1,7 @@
 <?php
 
 require_once '../vendor/autoload.php';
-require_once '../app/NL/database/config.php';
+require_once '../app/NL/config/config.php';
 require_once '../app/NL/bootstrap/bootstrap.php';
 
 use app\NL\Models\Company\Company;
