@@ -4,6 +4,7 @@ namespace app\NL\bootstrap;
 
 use app\NL\database\MongoAdapter;
 use app\NL\database\MysqlAdapter;
+use DI\ContainerBuilder;
 use Klein\Klein;
 use MongoDB\Driver\BulkWrite;
 use Smarty;
@@ -15,35 +16,54 @@ use app\NL\Models\Employee\EmployeeServiceMongodb;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
-$klein = new Klein();
-$smarty = new Smarty();
-$log = new Logger('Logger');
-$mysqlAdapter = new MysqlAdapter();
-$mongodbAdapter = new MongoAdapter();
-$database = new Database($mysqlAdapter, $mongodbAdapter);
-$validationMysql = new ValidationMysql($database);
-$validationMongodb = new ValidationMongodb($database, $log);
-$employeeServiceMysql = new EmployeeServiceMysql($validationMysql, $database, $log);
-$bulk = new BulkWrite();
-$employeeServiceMongodb = new EmployeeServiceMongodb($bulk, $validationMongodb, $database, $log);
+$builder = new ContainerBuilder();
+$builder->addDefinitions([
+    'Klein' => function () {
+        return new Klein();
+    },
+    'Smarty' => function () {
+        return new Smarty();
+    },
+    'MysqlAdapter' => function ($container) {
+        return new MysqlAdapter($container);
+    },
+    'MongoAdapter' => function ($container) {
+        return new MongoAdapter($container);
+    },
+    'ValidationMysql' => function ($container) {
+        return new ValidationMysql($container);
+    },
+    'ValidationMongodb' => function ($container) {
+        return new ValidationMongodb($container);
+    },
+    'Database' => function ($container) {
+        return new Database($container);
+    },
+    'BulkWrite' => function () {
+        return new BulkWrite();
+    },
+    'Logger' => function () {
+        $logger = new Logger('Logger');
+        return $logger->pushHandler(new StreamHandler('../app/NL/logger/loggerFile.log', Logger::DEBUG));
+    }
+]);
+$container = $builder->build();
 
 switch (CURRENT_DB) {
     case 'mysql':
-        $employeeService = $employeeServiceMysql;
-        $getAllEmployeesView = 'templates/indexMysql.tpl';
-        $getOneEmployeeView = 'templates/employeeByIdMysql.tpl';
-        $createEmployeeView = 'templates/createdEmployee.tpl';
-        $updateEmployeeView = 'templates/updatedEmployee.tpl';
+        $container->set('EmployeeService', new EmployeeServiceMysql($container));
+        $container->set('getAllEmployeesView', 'templates/indexMysql.tpl');
+        $container->set('getOneEmployeeView', 'templates/employeeByIdMysql.tpl');
+        $container->set('createEmployeeView', 'templates/createdEmployee.tpl');
+        $container->set('updateEmployeeView', 'templates/updatedEmployee.tpl');
         break;
     case 'mongodb':
-        $employeeService = $employeeServiceMongodb;
-        $getAllEmployeesView = 'templates/indexMongodb.tpl';
-        $getOneEmployeeView = 'templates/employeeByIdMongodb.tpl';
-        $createEmployeeView = 'templates/createdEmployee.tpl';
-        $updateEmployeeView = 'templates/updatedEmployee.tpl';
+        $container->set('EmployeeService', new EmployeeServiceMongodb($container));
+        $container->set('getAllEmployeesView', 'templates/indexMongodb.tpl');
+        $container->set('getOneEmployeeView', 'templates/employeeByIdMongodb.tpl');
+        $container->set('createEmployeeView', 'templates/createdEmployee.tpl');
+        $container->set('updateEmployeeView', 'templates/updatedEmployee.tpl');
         break;
     default:
         break;
 }
-
-$log->pushHandler(new StreamHandler('../app/NL/logger/loggerFile.log', Logger::DEBUG));

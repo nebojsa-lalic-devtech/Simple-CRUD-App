@@ -2,6 +2,8 @@
 
 namespace app\NL\database;
 
+use Psr\Container\ContainerInterface;
+
 class Database
 {
     private $mysqlAdapter;
@@ -9,13 +11,12 @@ class Database
 
     /**
      * Database constructor.
-     * @param MysqlAdapter $mysqlAdapter
-     * @param MongoAdapter $mongodbAdapter
+     * @param ContainerInterface $containerInterface
      */
-    public function __construct(MysqlAdapter $mysqlAdapter, MongoAdapter $mongodbAdapter)
+    public function __construct(ContainerInterface $containerInterface)
     {
-        $this->mysqlAdapter = $mysqlAdapter;
-        $this->mongodbAdapter = $mongodbAdapter;
+        $this->mysqlAdapter = $containerInterface->get('MysqlAdapter');
+        $this->mongodbAdapter = $containerInterface->get('MongoAdapter');
     }
 
     /**

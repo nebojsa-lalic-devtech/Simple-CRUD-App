@@ -2,9 +2,7 @@
 
 namespace app\NL\Models\Employee;
 
-use app\NL\database\Database;
-use app\NL\validation\ValidationMysql;
-use Monolog\Logger;
+use Psr\Container\ContainerInterface;
 
 class EmployeeServiceMysql implements IEmployeeService
 {
@@ -14,15 +12,13 @@ class EmployeeServiceMysql implements IEmployeeService
 
     /**
      * EmployeeServiceMysql constructor.
-     * @param ValidationMysql $val
-     * @param Database $db
-     * @param Logger $log
+     * @param ContainerInterface $containerInterface
      */
-    public function __construct(ValidationMysql $val, Database $db, Logger $log)
+    public function __construct(ContainerInterface $containerInterface)
     {
-        $this->validation = $val;
-        $this->db = $db;
-        $this->logger = $log;
+        $this->validation = $containerInterface->get('ValidationMysql');
+        $this->db = $containerInterface->get('Database');
+        $this->logger = $containerInterface->get('Logger');
     }
 
     /**

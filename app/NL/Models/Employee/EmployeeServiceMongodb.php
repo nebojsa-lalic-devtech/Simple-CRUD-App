@@ -2,13 +2,10 @@
 
 namespace app\NL\Models\Employee;
 
-use app\NL\database\Database;
-use app\NL\validation\ValidationMongodb;
 use MongoDB\BSON\ObjectID;
-use MongoDB\Driver\BulkWrite;
 use MongoDB\Driver\Query;
 use MongoDB\Driver\WriteConcern;
-use Monolog\Logger;
+use Psr\Container\ContainerInterface;
 
 class EmployeeServiceMongodb implements IEmployeeService
 {
@@ -19,17 +16,14 @@ class EmployeeServiceMongodb implements IEmployeeService
 
     /**
      * EmployeeServiceMongodb constructor.
-     * @param BulkWrite $bulk
-     * @param ValidationMongodb $val
-     * @param Database $db
-     * @param Logger $log
+     * @param ContainerInterface $containerInterface
      */
-    public function __construct(BulkWrite $bulk, ValidationMongodb $val, Database $db, Logger $log)
+    public function __construct(ContainerInterface $containerInterface)
     {
-        $this->bulk = $bulk;
-        $this->validation = $val;
-        $this->db = $db;
-        $this->logger = $log;
+        $this->bulk = $containerInterface->get('BulkWrite');
+        $this->validation = $containerInterface->get('ValidationMongodb');
+        $this->db = $containerInterface->get('Database');
+        $this->logger = $containerInterface->get('Logger');
     }
 
     /**
@@ -72,7 +66,7 @@ class EmployeeServiceMongodb implements IEmployeeService
 
     /**
      * @param $id
-     * @return bool
+     * @return mixed
      */
     public function getOneEmployee($id)
     {
@@ -106,7 +100,7 @@ class EmployeeServiceMongodb implements IEmployeeService
             $this->logger->error("***** CAN'T CREATE EMPLOYEE! *****");
         }
     }
-    
+
     /**
      * @throws \Exception
      */
@@ -130,7 +124,7 @@ class EmployeeServiceMongodb implements IEmployeeService
             }
         } catch (\MongoException $ex) {
             echo '***** CAN\'T UPDATE EMPLOYEE WITH OBJECT ID: ' . $id . ' *****' . $ex->getMessage();
-            $this->logger->error("***** CAN'T UPDATE EMPLOYEE WITH OBJECT ID: {$id} *****");
+            $this->logger->error("***** CAN'T DELETE EMPLOYEE WITH ID:{$id} *****");
         }
     }
 

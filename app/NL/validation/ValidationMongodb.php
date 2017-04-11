@@ -2,10 +2,9 @@
 
 namespace app\NL\validation;
 
-use app\NL\database\Database;
 use MongoDB\BSON\ObjectID;
 use MongoDB\Driver\Query;
-use Monolog\Logger;
+use Psr\Container\ContainerInterface;
 
 class ValidationMongodb
 {
@@ -14,13 +13,12 @@ class ValidationMongodb
 
     /**
      * ValidationMongodb constructor.
-     * @param Database $db
-     * @param Logger $log
+     * @param ContainerInterface $containerInterface
      */
-    public function __construct(Database $db, Logger $log)
+    public function __construct(ContainerInterface $containerInterface)
     {
-        $this->db = $db;
-        $this->logger = $log;
+        $this->db = $containerInterface->get('Database');
+        $this->logger = $containerInterface->get('Logger');
     }
 
     /**
