@@ -2,7 +2,7 @@
 
 namespace app\NL\validation;
 
-use app\NL\database\Database;
+use Psr\Container\ContainerInterface;
 
 class ValidationMysql
 {
@@ -10,11 +10,11 @@ class ValidationMysql
 
     /**
      * ValidationMysql constructor.
-     * @param Database $db
+     * @param ContainerInterface $containerInterface
      */
-    public function __construct(Database $db)
+    public function __construct(ContainerInterface $containerInterface)
     {
-        $this->db = $db;
+        $this->db = $containerInterface->get('Database');
     }
 
     /**
