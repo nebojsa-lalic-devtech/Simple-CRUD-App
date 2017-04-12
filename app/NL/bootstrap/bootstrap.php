@@ -24,11 +24,11 @@ $builder->addDefinitions([
     'Smarty' => function () {
         return new Smarty();
     },
-    'MysqlAdapter' => function ($container) {
-        return new MysqlAdapter($container);
+    'MysqlAdapter' => function () {
+        return new MysqlAdapter();
     },
-    'MongoAdapter' => function ($container) {
-        return new MongoAdapter($container);
+    'MongoAdapter' => function () {
+        return new MongoAdapter();
     },
     'ValidationMysql' => function ($container) {
         return new ValidationMysql($container);

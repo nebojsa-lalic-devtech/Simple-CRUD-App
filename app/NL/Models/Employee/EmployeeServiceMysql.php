@@ -14,7 +14,7 @@ class EmployeeServiceMysql implements IEmployeeService
      * EmployeeServiceMysql constructor.
      * @param ContainerInterface $containerInterface
      */
-    public function __construct(ContainerInterface $containerInterface)
+    public function __construct($containerInterface)
     {
         $this->validation = $containerInterface->get('ValidationMysql');
         $this->db = $containerInterface->get('Database');
@@ -70,14 +70,9 @@ class EmployeeServiceMysql implements IEmployeeService
      */
     public function getOneEmployee($id)
     {
-        $this->validation->validateId($id);
         try {
-            $statement = $this->db->getDatabase()->createConnection()->prepare("SELECT * FROM employee WHERE id = :id LIMIT 1");
-            $statement->execute(array(
-                'id' => $id
-            ));
-            $oneEmployee = $statement->fetch(\PDO::FETCH_ASSOC);
-            $this->logger->info("** Get one EMPLOYEE from MongoDB database with id:{$id} **");
+            $oneEmployee = $this->validation->validateId($id);
+//            $this->logger->info("** Get one EMPLOYEE from MongoDB database with id:{$id} **");
             return $oneEmployee;
         } catch (\PDOException $ex) {
             echo '***** CAN\'T GET EMPLOYEE WITH ID: ' . $id . ' *****' . $ex->getMessage();
