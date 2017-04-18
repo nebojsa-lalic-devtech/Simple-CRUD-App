@@ -17,11 +17,11 @@ class EmployeeServiceMysqlTest extends TestCase
     private $mockedPdoStatement;
 
     /**
-     * EmployeeServiceMysqlTest constructor.
+     * SetUp Mocked Objects
      */
-    public function __construct()
+    public function setUp()
     {
-        parent::__construct();
+        parent::setUp();
         $this->mockedContainer = m::mock('ContainerBuilder');
         $this->mockedValidation = m::mock('Validation');
         $this->mockedDatabase = m::mock('Database');
@@ -29,7 +29,6 @@ class EmployeeServiceMysqlTest extends TestCase
         $this->mockedMysqlAdapter = m::mock('MysqlAdapter');
         $this->mockedPdo = m::mock('PDO');
         $this->mockedPdoStatement = m::mock('PDOStatement');
-
     }
 
     /**
