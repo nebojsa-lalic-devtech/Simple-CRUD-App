@@ -2,18 +2,7 @@
 
 namespace app\NL\tests;
 
-use app\NL\database\Database;
-use app\NL\database\MongoAdapter;
-use app\NL\database\MysqlAdapter;
 use app\NL\Models\Employee\EmployeeServiceMysql;
-use app\NL\validation\ValidationMongodb;
-use app\NL\validation\ValidationMysql;
-use DI\Container;
-use DI\ContainerBuilder;
-use Klein\Klein;
-use MongoDB\Driver\BulkWrite;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 use Mockery as m;
 
@@ -26,6 +15,33 @@ define('DB_PASS', 'root');
 
 class EmployeeServiceMysqlTest extends TestCase
 {
+    private $mockedContainer;
+    private $mockedValidation;
+    private $mockedDatabase;
+    private $mockedLogger;
+    private $mockedMysqlAdapter;
+    private $mockedPdo;
+    private $mockedPdoStatement;
+
+    /**
+     * EmployeeServiceMysqlTest constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->mockedContainer = m::mock('ContainerBuilder');
+        $this->mockedValidation = m::mock('Validation');
+        $this->mockedDatabase = m::mock('Database');
+        $this->mockedLogger = m::mock('Logger');
+        $this->mockedMysqlAdapter = m::mock('MysqlAdapter');
+        $this->mockedPdo = m::mock('PDO');
+        $this->mockedPdoStatement = m::mock('PDOStatement');
+
+    }
+
+    /**
+     * Test for GetOneEmployee
+     */
     public function testGetsOneEmployeeFromDatabase()
     {
         $returnEmployeeFromDb = array(
@@ -35,12 +51,9 @@ class EmployeeServiceMysqlTest extends TestCase
             'email' => 'lalicnebojsa@gmail.com',
             'job' => 'developer'
         );
-        $mockedContainer = m::mock('ContainerBuilder');
-        $validationMysql = m::mock('ValidationMysql');
-        $logger = m::mock('Logger');
-        $mockedContainer->shouldReceive('get')->times(2)->andReturn($validationMysql, $logger);
-        $validationMysql->shouldReceive('validateId')->once()->with(1)->andReturn($returnEmployeeFromDb);
-        $logger->shouldReceive('info')->once()->andReturn('** NEW EMPLOYEE successfully created MySQL database **');
+        $this->mockedContainer->shouldReceive('get')->times(2)->andReturn($this->mockedValidation, $this->mockedLogger);
+        $this->mockedValidation->shouldReceive('validateId')->once()->with(1)->andReturn($returnEmployeeFromDb);
+        $this->mockedLogger->shouldReceive('info')->once()->andReturn('** NEW EMPLOYEE successfully created MySQL database **');
         $expectedReturnEmployee = array(
             'id' => 1,
             'first_name' => 'Nebojsa',
@@ -48,8 +61,81 @@ class EmployeeServiceMysqlTest extends TestCase
             'email' => 'lalicnebojsa@gmail.com',
             'job' => 'developer'
         );
-        $employeeService = new EmployeeServiceMysql($mockedContainer);
+        $employeeService = new EmployeeServiceMysql($this->mockedContainer);
 
         $this->assertEquals($expectedReturnEmployee, $employeeService->getOneEmployee(1));
+    }
+
+    /**
+     * Test for GetAllEmployees
+     */
+    public function testGetsAllEmployeesFromDatabase()
+    {
+        $returnEmployeesArrayFromDb = array(
+            '0' => array(
+                'id' => 1,
+                'first_name' => 'Nebojsa',
+                'last_name' => 'Lalic',
+                'email' => 'lalicnebojsa@gmail.com',
+                'job' => 'developer'
+            ),
+            '1' => array(
+                'id' => 2,
+                'first_name' => 'Novak',
+                'last_name' => 'Djokovic',
+                'email' => 'novakdjokovic@gmail.com',
+                'job' => 'manager'
+            )
+        );
+
+        $expectedEmployeesArrayFromDb = array(
+            '0' => array(
+                'id' => 1,
+                'first_name' => 'Nebojsa',
+                'last_name' => 'Lalic',
+                'email' => 'lalicnebojsa@gmail.com',
+                'job' => 'developer'
+            ),
+            '1' => array(
+                'id' => 2,
+                'first_name' => 'Novak',
+                'last_name' => 'Djokovic',
+                'email' => 'novakdjokovic@gmail.com',
+                'job' => 'manager'
+            )
+        );
+        $this->mockedContainer->shouldReceive('get')->times(3)->andReturn($this->mockedValidation, $this->mockedLogger);
+        $this->mockedValidation->shouldReceive('connectAndTryExecute')->once()->andReturn(true);
+        $this->mockedValidation->shouldReceive('ifTableNotEmptyFetchResult')->once()->andReturn($returnEmployeesArrayFromDb);
+        
+        $this->mockedLogger->shouldReceive('info')->once()->andReturn('** Get list of ALL EMPLOYEES from MySQL database **');
+        $this->mockedLogger->shouldReceive('error')->once()->andReturn('** Get list of ALL EMPLOYEES from MySQL database **');
+
+        $employeeService = new EmployeeServiceMysql($this->mockedContainer);
+
+        $this->assertEquals($expectedEmployeesArrayFromDb, $employeeService->getAllEmployees());
+    }
+
+    /**
+     * Test for DeleteEmployee
+     */
+    public function testDeleteEmployeeFromDatabase()
+    {
+        $returnEmployeeFromDb = array(
+            'id' => 1,
+            'first_name' => 'Nebojsa',
+            'last_name' => 'Lalic',
+            'email' => 'lalicnebojsa@gmail.com',
+            'job' => 'developer'
+        );
+        $this->mockedContainer->shouldReceive('get')->times(2)->andReturn($this->mockedValidation, $this->mockedLogger);
+        $this->mockedValidation->shouldReceive('validateId')->once()->with(1)->andReturn($returnEmployeeFromDb);
+        $this->mockedValidation->shouldReceive('connectAndTryExecute')->once()->andReturn(true);
+        $this->mockedLogger->shouldReceive('info')->once()->andReturn('** EMPLOYEE successfully DELETED from MySql DB database**');
+        $this->mockedLogger->shouldReceive('error')->once()->andReturn('** CAN\'T DELETE EMPLOYEE FROM DATABASE **');
+
+        $employeeService = new EmployeeServiceMysql($this->mockedContainer);
+
+        $this->assertNull($employeeService->deleteEmployee(1));
     }
 }
