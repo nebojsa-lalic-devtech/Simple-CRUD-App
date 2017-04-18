@@ -6,13 +6,6 @@ use app\NL\Models\Employee\EmployeeServiceMysql;
 use PHPUnit\Framework\TestCase;
 use Mockery as m;
 
-define('CURRENT_DB', 'mysql');
-
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'simple-crud-app');
-define('DB_USER', 'root');
-define('DB_PASS', 'root');
-
 class EmployeeServiceMysqlTest extends TestCase
 {
     private $mockedContainer;
