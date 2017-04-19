@@ -14,7 +14,7 @@ class EmployeeServiceMysql implements IEmployeeService
      * EmployeeServiceMysql constructor.
      * @param ContainerInterface $containerInterface
      */
-    public function __construct(ContainerInterface $containerInterface)
+    public function __construct($containerInterface)
     {
         $this->validation = $containerInterface->get('ValidationMysql');
         $this->db = $containerInterface->get('Database');
@@ -27,20 +27,11 @@ class EmployeeServiceMysql implements IEmployeeService
      */
     public function getAllEmployees()
     {
-        $rows = array();
-        $statement = $this->db->getDatabase()->createConnection()->prepare("SELECT * FROM `simple-crud-app`.employee");
-        $statement->execute();
-
-        if (!($statement->rowCount() > 0)) {
-            $this->logger->error("***** CAN'T GET TABLE CONTENT! EMPTY TABLE! *****");
-            throw new \Exception("***** CAN'T GET TABLE CONTENT! EMPTY TABLE! *****");
-        }
-
-        while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {
-            $rows[] = $row;
-        }
+        $query = "SELECT * FROM `simple-crud-app`.employee";
+        $statement = $this->validation->connectAndTryExecute($query, $execute=null);
+        $result = $this->validation->ifTableNotEmptyFetchResult($statement);
         $this->logger->info('** Get list of ALL EMPLOYEES from MySQL database **');
-        return $rows;
+        return $result;
     }
 
     /**
@@ -51,12 +42,13 @@ class EmployeeServiceMysql implements IEmployeeService
     {
         $this->validation->validateId($id);
         try {
-            $statement = $this->db->getDatabase()->createConnection()->prepare("DELETE FROM employee WHERE id = :id");
-            $statement->execute(array(
+            $query = "DELETE FROM employee WHERE id = :id";
+            $execute = array(
                 'id' => $id
-            ));
+            );
+            $this->validation->connectAndTryExecute($query, $execute);
             echo 'ITEM WITH ID: ' . $id . ' SUCCESSFULLY DELETED FROM DATABASE!';
-            $this->logger->info("** EMPLOYEE with id:{$id} successfully DELETED from Mongo DB database**");
+            $this->logger->info("** EMPLOYEE with id:{$id} successfully DELETED from MySql DB database**");
         } catch (\PDOException $ex) {
             echo '***** CAN\'T DELETE EMPLOYEE WITH ID: ' . $id . ' *****' . $ex->getMessage();
             $this->logger->error("***** CAN'T DELETE EMPLOYEE WITH ID:{$id} *****");
@@ -70,13 +62,8 @@ class EmployeeServiceMysql implements IEmployeeService
      */
     public function getOneEmployee($id)
     {
-        $this->validation->validateId($id);
         try {
-            $statement = $this->db->getDatabase()->createConnection()->prepare("SELECT * FROM employee WHERE id = :id LIMIT 1");
-            $statement->execute(array(
-                'id' => $id
-            ));
-            $oneEmployee = $statement->fetch(\PDO::FETCH_ASSOC);
+            $oneEmployee = $this->validation->validateId($id);
             $this->logger->info("** Get one EMPLOYEE from MongoDB database with id:{$id} **");
             return $oneEmployee;
         } catch (\PDOException $ex) {
@@ -92,15 +79,16 @@ class EmployeeServiceMysql implements IEmployeeService
     {
         try {
             if (isset($_POST['Submit']) && $_POST['first_name'] != '' && $_POST['last_name'] != '') {
-                $statement = $this->db->getDatabase()->createConnection()->prepare("INSERT INTO `simple-crud-app`.`employee` (`id`, `first_name`, `last_name`, `email`, `job`) VALUES (:id, :first_name, :last_name, :email, :job)");
-                $id = $this->db->getDatabase()->createConnection()->lastInsertId();
-                $statement->execute(array(
+                $query = "INSERT INTO `simple-crud-app`.`employee` (`id`, `first_name`, `last_name`, `email`, `job`) VALUES (:id, :first_name, :last_name, :email, :job)";
+                $id = $this->validation->setIdIfNotAlready();
+                $execute = array(
                     'id' => $_POST['id'] ? $_POST['id'] : $id,
                     'first_name' => $_POST['first_name'] ? $_POST['first_name'] : null,
                     'last_name' => $_POST['last_name'] ? $_POST['last_name'] : null,
                     'email' => $_POST['email'],
                     'job' => $_POST['job']
-                ));
+                );
+                $this->validation->connectAndTryExecute($query, $execute);
                 echo 'NEW EMPLOYEE CREATED SUCCESSFULLY!';
                 $this->logger->info('** NEW EMPLOYEE successfully created MySQL database **');
             } else {
@@ -121,14 +109,15 @@ class EmployeeServiceMysql implements IEmployeeService
         $this->validation->validateId($id);
         try {
             if (isset($_POST['Update'])) {
-                $statement = $this->db->getDatabase()->createConnection()->prepare("UPDATE `simple-crud-app`.`employee` SET `first_name`=:first_name, `last_name`=:last_name, `email`=:email, `job`=:job WHERE `id`=:id");
-                $statement->execute(array(
+                $query = "UPDATE `simple-crud-app`.`employee` SET `first_name`=:first_name, `last_name`=:last_name, `email`=:email, `job`=:job WHERE `id`=:id";
+                $execute = array(
                     'id' => $id,
                     'first_name' => $_POST['first_name'] ? $_POST['first_name'] : null,
                     'last_name' => $_POST['last_name'] ? $_POST['last_name'] : null,
                     'email' => $_POST['email'],
                     'job' => $_POST['job']
-                ));
+                );
+                $this->validation->connectAndTryExecute($query, $execute);
                 echo 'EMPLOYEE WITH ID: ' . $id . ' UPDATED SUCCESSFULLY!';
                 $this->logger->info("** EMPLOYEE WITH ID:{$id} UPDATED SUCCESSFULLY **");
             }

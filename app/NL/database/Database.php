@@ -13,7 +13,7 @@ class Database
      * Database constructor.
      * @param ContainerInterface $containerInterface
      */
-    public function __construct(ContainerInterface $containerInterface)
+    public function __construct($containerInterface)
     {
         $this->mysqlAdapter = $containerInterface->get('MysqlAdapter');
         $this->mongodbAdapter = $containerInterface->get('MongoAdapter');

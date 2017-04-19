@@ -18,7 +18,7 @@ class EmployeeServiceMongodb implements IEmployeeService
      * EmployeeServiceMongodb constructor.
      * @param ContainerInterface $containerInterface
      */
-    public function __construct(ContainerInterface $containerInterface)
+    public function __construct($containerInterface)
     {
         $this->bulk = $containerInterface->get('BulkWrite');
         $this->validation = $containerInterface->get('ValidationMongodb');

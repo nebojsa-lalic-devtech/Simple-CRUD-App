@@ -15,7 +15,7 @@ class ValidationMongodb
      * ValidationMongodb constructor.
      * @param ContainerInterface $containerInterface
      */
-    public function __construct(ContainerInterface $containerInterface)
+    public function __construct($containerInterface)
     {
         $this->db = $containerInterface->get('Database');
         $this->logger = $containerInterface->get('Logger');
